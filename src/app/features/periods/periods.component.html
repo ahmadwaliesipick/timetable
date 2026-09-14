@@ -7,12 +7,25 @@
   </div>
 
   <div class="desk-grid">
-    <form class="panel" (submit)="$event.preventDefault(); save()">
+    <form
+      id="period-form"
+      class="panel edit-form"
+      [class.is-editing]="!!editingId()"
+      (submit)="$event.preventDefault(); save()"
+    >
       <h2>{{ editingId() ? 'Edit period' : 'Add period' }}</h2>
+      @if (editingId()) {
+        <p class="edit-banner">Editing — update details below, then Save.</p>
+      }
       <div class="grid-form cols-2">
         <div class="field">
-          <label>Name</label>
-          <input [ngModel]="name()" (ngModelChange)="name.set($event)" name="name" />
+          <label for="period-name">Name</label>
+          <input
+            id="period-name"
+            [ngModel]="name()"
+            (ngModelChange)="name.set($event)"
+            name="name"
+          />
         </div>
         <div class="field">
           <label>Order</label>

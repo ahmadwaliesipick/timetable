@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Period } from '../../core/models';
+import { scrollToEditForm } from '../../core/scroll-to-form';
 import { SchoolStore } from '../../core/school.store';
 
 @Component({
@@ -32,6 +33,7 @@ export class PeriodsComponent {
     this.sortOrder.set(p.sortOrder);
     this.startTime.set(p.startTime ?? '');
     this.endTime.set(p.endTime ?? '');
+    scrollToEditForm('period-form', 'period-name');
   }
 
   async save(): Promise<void> {

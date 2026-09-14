@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Subject } from '../../core/models';
+import { scrollToEditForm } from '../../core/scroll-to-form';
 import { SchoolStore } from '../../core/school.store';
 
 @Component({
@@ -26,6 +27,7 @@ export class SubjectsComponent {
     this.editingId.set(s.id);
     this.name.set(s.name);
     this.code.set(s.code ?? '');
+    scrollToEditForm('subject-form', 'subject-name');
   }
 
   async save(): Promise<void> {

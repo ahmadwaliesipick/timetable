@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Teacher } from '../../core/models';
+import { scrollToEditForm } from '../../core/scroll-to-form';
 import { SchoolStore } from '../../core/school.store';
 
 @Component({
@@ -32,30 +33,7 @@ export class TeachersComponent {
     this.email.set(t.email ?? '');
     this.subjectIds.set([...t.subjectIds]);
     this.error.set('');
-    this.scrollToForm();
-  }
-
-  private scrollToForm(): void {
-    // Mobile Safari is unreliable with smooth scrollIntoView — force top + focus.
-    const go = () => {
-      const form = document.getElementById('teacher-form');
-      const headerOffset = 72;
-      if (form) {
-        const y = form.getBoundingClientRect().top + window.pageYOffset - headerOffset;
-        window.scrollTo(0, Math.max(0, y));
-        document.documentElement.scrollTop = Math.max(0, y);
-        document.body.scrollTop = Math.max(0, y);
-      } else {
-        window.scrollTo(0, 0);
-        document.documentElement.scrollTop = 0;
-        document.body.scrollTop = 0;
-      }
-      const nameInput = document.getElementById('teacher-name') as HTMLInputElement | null;
-      nameInput?.focus({ preventScroll: true });
-    };
-    // Run twice so layout/paint after Angular updates is covered.
-    setTimeout(go, 0);
-    setTimeout(go, 120);
+    scrollToEditForm('teacher-form', 'teacher-name');
   }
 
   toggleSubject(id: string, checked: boolean): void {

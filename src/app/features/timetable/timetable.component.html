@@ -23,15 +23,28 @@
   </div>
 
   <div class="desk-grid">
-    <form class="panel" (submit)="$event.preventDefault(); save()">
+    <form
+      id="slot-form"
+      class="panel edit-form"
+      [class.is-editing]="!!editingId()"
+      (submit)="$event.preventDefault(); save()"
+    >
       <h2>{{ editingId() ? 'Edit slot' : 'Add slot' }} · {{ dayLabels[dayOfWeek()] }}</h2>
+      @if (editingId()) {
+        <p class="edit-banner">Editing — update details below, then Save.</p>
+      }
       @if (error()) {
         <p class="err">{{ error() }}</p>
       }
       <div class="grid-form cols-2">
         <div class="field">
-          <label>Period</label>
-          <select [ngModel]="periodId()" (ngModelChange)="periodId.set($event)" name="period">
+          <label for="slot-period">Period</label>
+          <select
+            id="slot-period"
+            [ngModel]="periodId()"
+            (ngModelChange)="periodId.set($event)"
+            name="period"
+          >
             @for (p of store.periods(); track p.id) {
               <option [value]="p.id">{{ p.name }}</option>
             }

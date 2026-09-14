@@ -8,6 +8,7 @@ import {
   teacherName,
 } from '../../core/suggestion.logic';
 import { SchoolStore } from '../../core/school.store';
+import { scrollToEditForm } from '../../core/scroll-to-form';
 
 @Component({
   selector: 'app-timetable',
@@ -70,6 +71,7 @@ export class TimetableComponent {
     this.teacherId.set(slot.teacherId);
     this.room.set(slot.room ?? '');
     this.error.set('');
+    scrollToEditForm('slot-form', 'slot-period');
   }
 
   async save(): Promise<void> {
