@@ -10,7 +10,7 @@
   </div>
 
   <div class="desk-grid">
-    <form class="panel" (submit)="$event.preventDefault(); save()">
+    <form id="teacher-form" class="panel" (submit)="$event.preventDefault(); save()">
       <h2>{{ editingId() ? 'Edit teacher' : 'Add teacher' }}</h2>
       @if (error()) {
         <p class="err">{{ error() }}</p>

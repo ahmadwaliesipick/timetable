@@ -32,6 +32,16 @@ export class TeachersComponent {
     this.email.set(t.email ?? '');
     this.subjectIds.set([...t.subjectIds]);
     this.error.set('');
+    this.scrollToForm();
+  }
+
+  private scrollToForm(): void {
+    requestAnimationFrame(() => {
+      document.getElementById('teacher-form')?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    });
   }
 
   toggleSubject(id: string, checked: boolean): void {
