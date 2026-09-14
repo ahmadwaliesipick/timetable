@@ -21,20 +21,24 @@
         <label>Email</label>
         <input [ngModel]="email()" (ngModelChange)="email.set($event)" name="email" />
       </div>
-      <div class="field">
-        <label>Subjects they can teach</label>
-        <div class="checkbox-grid">
-          @for (s of store.subjects(); track s.id) {
-            <label>
-              <input
-                type="checkbox"
-                [checked]="subjectIds().includes(s.id)"
-                (change)="toggleSubject(s.id, $any($event.target).checked)"
-              />
-              {{ s.name }}
-            </label>
-          }
-        </div>
+      <div class="field subjects-field">
+        <span class="field-label">Subjects they can teach</span>
+        @if (!store.subjects().length) {
+          <p class="hint">No subjects yet — add some on the Subjects page first.</p>
+        } @else {
+          <div class="subject-picker" role="group" aria-label="Subjects they can teach">
+            @for (s of store.subjects(); track s.id) {
+              <label class="subject-chip" [class.selected]="subjectIds().includes(s.id)">
+                <input
+                  type="checkbox"
+                  [checked]="subjectIds().includes(s.id)"
+                  (change)="toggleSubject(s.id, $any($event.target).checked)"
+                />
+                <span>{{ s.name }}</span>
+              </label>
+            }
+          </div>
+        }
       </div>
       <div class="row-actions">
         <button class="btn" type="submit">Save</button>
