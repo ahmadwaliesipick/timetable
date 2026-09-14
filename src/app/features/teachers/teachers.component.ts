@@ -17,6 +17,7 @@ export class TeachersComponent {
   readonly name = signal('');
   readonly email = signal('');
   readonly subjectIds = signal<string[]>([]);
+  readonly needsCover = signal(true);
   readonly error = signal('');
 
   startCreate(): void {
@@ -24,6 +25,7 @@ export class TeachersComponent {
     this.name.set('');
     this.email.set('');
     this.subjectIds.set([]);
+    this.needsCover.set(true);
     this.error.set('');
   }
 
@@ -32,6 +34,7 @@ export class TeachersComponent {
     this.name.set(t.name);
     this.email.set(t.email ?? '');
     this.subjectIds.set([...t.subjectIds]);
+    this.needsCover.set(t.needsCover !== false);
     this.error.set('');
     scrollToEditForm('teacher-form', 'teacher-name');
   }
@@ -53,6 +56,7 @@ export class TeachersComponent {
       name: this.name().trim(),
       email: this.email().trim() || null,
       subjectIds: this.subjectIds(),
+      needsCover: this.needsCover(),
     });
     this.startCreate();
   }

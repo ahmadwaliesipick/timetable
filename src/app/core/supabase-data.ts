@@ -14,7 +14,7 @@ import {
   UserRole,
 } from './models';
 
-type TeacherRow = { id: string; name: string; email: string | null };
+type TeacherRow = { id: string; name: string; email: string | null; needs_cover: boolean | null };
 type SubjectRow = { id: string; name: string; code: string | null };
 type ClassRow = { id: string; name: string; grade: string | null };
 type PeriodRow = {
@@ -157,7 +157,7 @@ export async function fetchSchoolData(client: SupabaseClient): Promise<SchoolDat
     arrangementsRes,
     linksRes,
   ] = await Promise.all([
-    client.from('teachers').select('id,name,email').order('name'),
+    client.from('teachers').select('id,name,email,needs_cover').order('name'),
     client.from('subjects').select('id,name,code').order('name'),
     client.from('class_sections').select('id,name,grade').order('name'),
     client.from('periods').select('id,name,sort_order,start_time,end_time').order('sort_order'),
@@ -194,6 +194,7 @@ export async function fetchSchoolData(client: SupabaseClient): Promise<SchoolDat
         name: t.name,
         email: t.email,
         subjectIds: subjectsByTeacher.get(t.id) ?? [],
+        needsCover: t.needs_cover !== false,
       })
     ),
     subjects: subjects.map(
@@ -247,7 +248,11 @@ export async function saveTeacher(
   client: SupabaseClient,
   input: Omit<Teacher, 'id'> & { id?: string }
 ): Promise<Teacher> {
-  const payload = { name: input.name, email: input.email };
+  const payload = {
+    name: input.name,
+    email: input.email,
+    needs_cover: input.needsCover !== false,
+  };
   let id = input.id;
 
   if (id) {
@@ -267,7 +272,13 @@ export async function saveTeacher(
     if (error) throw new Error(error.message);
   }
 
-  return { id: id!, name: input.name, email: input.email, subjectIds: input.subjectIds };
+  return {
+    id: id!,
+    name: input.name,
+    email: input.email,
+    subjectIds: input.subjectIds,
+    needsCover: payload.needs_cover,
+  };
 }
 
 export async function deleteTeacher(client: SupabaseClient, id: string): Promise<void> {

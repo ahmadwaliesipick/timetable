@@ -36,6 +36,19 @@
         <label>Email</label>
         <input [ngModel]="email()" (ngModelChange)="email.set($event)" name="email" />
       </div>
+      <div class="field">
+        <label class="cover-option">
+          <input
+            type="checkbox"
+            [checked]="needsCover()"
+            (change)="needsCover.set($any($event.target).checked)"
+          />
+          Needs cover when absent
+        </label>
+        <p class="hint">
+          Turn off for teachers whose absences should not create substitute arrangements.
+        </p>
+      </div>
       <div class="field subjects-field">
         <span class="field-label">Subjects they can teach</span>
         @if (!store.subjects().length) {
@@ -73,6 +86,9 @@
                 <strong>{{ t.name }}</strong>
                 <div class="muted">{{ t.email || 'No email' }}</div>
                 <div class="muted">{{ subjectNames(t.subjectIds) || 'No subjects tagged' }}</div>
+                @if (t.needsCover === false) {
+                  <span class="badge soft">No cover needed</span>
+                }
               </div>
               <div class="row-actions">
                 <button class="btn ghost" type="button" (click)="startEdit(t)">Edit</button>

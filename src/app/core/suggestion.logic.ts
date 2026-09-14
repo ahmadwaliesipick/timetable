@@ -20,9 +20,14 @@ export function suggestArrangements(data: SchoolData, dateIso: string): Arrangem
   const absentIds = new Set(
     data.absences.filter((a) => a.absenceDate === dateIso).map((a) => a.teacherId)
   );
+  const noCoverNeeded = new Set(
+    data.teachers.filter((t) => t.needsCover === false).map((t) => t.id)
+  );
 
   const daySlots = data.slots.filter((s) => s.dayOfWeek === day);
-  const gaps = daySlots.filter((s) => absentIds.has(s.teacherId));
+  const gaps = daySlots.filter(
+    (s) => absentIds.has(s.teacherId) && !noCoverNeeded.has(s.teacherId)
+  );
 
   /** Confirmed cover periods for a substitute on this date */
   const confirmedElsewhere = new Map<string, Set<string>>();

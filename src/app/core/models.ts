@@ -6,6 +6,8 @@ export interface Teacher {
   name: string;
   email: string | null;
   subjectIds: string[];
+  /** When false, absences do not generate cover arrangements. */
+  needsCover: boolean;
 }
 
 export interface Subject {

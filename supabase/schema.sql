@@ -36,6 +36,7 @@ create table public.teachers (
   id uuid primary key default gen_random_uuid(),
   name text not null,
   email text unique,
+  needs_cover boolean not null default true,
   created_at timestamptz not null default now()
 );
 

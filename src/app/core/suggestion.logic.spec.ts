@@ -77,4 +77,19 @@ describe('suggestArrangements', () => {
     const unique = new Set(subs);
     expect(unique.size).toBeGreaterThan(1);
   });
+
+  it('skips cover arrangements for teachers marked needsCover false', () => {
+    const data = createSeedData();
+    const monday = '2026-09-14';
+    data.teachers.find((t) => t.id === 't-ahmed')!.needsCover = false;
+    data.absences.push({
+      id: uid(),
+      teacherId: 't-ahmed',
+      absenceDate: monday,
+      reason: 'No cover needed',
+    });
+
+    const result = suggestArrangements(data, monday);
+    expect(result.every((a) => a.originalTeacherId !== 't-ahmed')).toBeTrue();
+  });
 });

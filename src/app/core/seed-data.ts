@@ -34,10 +34,10 @@ export function createSeedData(): SchoolData {
   ];
 
   const teachers: Teacher[] = [
-    { id: 't-ahmed', name: 'Ahmed Khan', email: 'ahmed@school.test', subjectIds: ['s-math'] },
-    { id: 't-sara', name: 'Sara Malik', email: 'sara@school.test', subjectIds: ['s-eng', 's-math'] },
-    { id: 't-omar', name: 'Omar Ali', email: 'omar@school.test', subjectIds: ['s-sci'] },
-    { id: 't-fatima', name: 'Fatima Noor', email: 'fatima@school.test', subjectIds: ['s-hist'] },
+    { id: 't-ahmed', name: 'Ahmed Khan', email: 'ahmed@school.test', subjectIds: ['s-math'], needsCover: true },
+    { id: 't-sara', name: 'Sara Malik', email: 'sara@school.test', subjectIds: ['s-eng', 's-math'], needsCover: true },
+    { id: 't-omar', name: 'Omar Ali', email: 'omar@school.test', subjectIds: ['s-sci'], needsCover: true },
+    { id: 't-fatima', name: 'Fatima Noor', email: 'fatima@school.test', subjectIds: ['s-hist'], needsCover: true },
   ];
 
   const monday = 1;
