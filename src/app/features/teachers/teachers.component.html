@@ -10,14 +10,27 @@
   </div>
 
   <div class="desk-grid">
-    <form id="teacher-form" class="panel" (submit)="$event.preventDefault(); save()">
+    <form
+      id="teacher-form"
+      class="panel"
+      [class.is-editing]="!!editingId()"
+      (submit)="$event.preventDefault(); save()"
+    >
       <h2>{{ editingId() ? 'Edit teacher' : 'Add teacher' }}</h2>
+      @if (editingId()) {
+        <p class="edit-banner">Editing — update details below, then Save.</p>
+      }
       @if (error()) {
         <p class="err">{{ error() }}</p>
       }
       <div class="field">
-        <label>Name</label>
-        <input [ngModel]="name()" (ngModelChange)="name.set($event)" name="name" />
+        <label for="teacher-name">Name</label>
+        <input
+          id="teacher-name"
+          [ngModel]="name()"
+          (ngModelChange)="name.set($event)"
+          name="name"
+        />
       </div>
       <div class="field">
         <label>Email</label>

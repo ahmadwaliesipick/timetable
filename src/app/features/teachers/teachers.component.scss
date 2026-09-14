@@ -8,6 +8,25 @@
   font-weight: 600;
 }
 
+#teacher-form {
+  scroll-margin-top: 4.75rem;
+}
+
+#teacher-form.is-editing {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-soft);
+}
+
+.edit-banner {
+  margin: 0 0 0.85rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+
 .subjects-field {
   gap: 0.55rem;
 }
