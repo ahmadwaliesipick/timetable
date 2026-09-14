@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import {
   Absence,
   Arrangement,
+  AppUser,
   ClassSection,
   Period,
   DEFAULT_SCHOOL_PROFILE,
@@ -11,6 +12,7 @@ import {
   Subject,
   Teacher,
   TimetableSlot,
+  UserRole,
   uid,
 } from './models';
 import { createSeedData } from './seed-data';
@@ -29,6 +31,7 @@ export class SchoolStore {
   private readonly auth = inject(AuthService);
   private readonly state = signal<SchoolData>(emptyData());
   readonly profile = signal<SchoolProfile>(DEFAULT_SCHOOL_PROFILE);
+  readonly accounts = signal<AppUser[]>([]);
   readonly loading = signal(false);
   readonly lastError = signal<string | null>(null);
   readonly loaded = signal(false);
@@ -94,6 +97,30 @@ export class SchoolStore {
       }
       const saved = await api.saveSchoolProfile(this.client, input);
       this.profile.set(saved);
+    });
+  }
+
+  async loadAccounts(): Promise<void> {
+    if (this.demoMode) {
+      this.accounts.set([...this.auth.demoUsers]);
+      return;
+    }
+    const list = await api.fetchProfiles(this.client);
+    this.accounts.set(list);
+  }
+
+  async setAccountRole(userId: string, role: UserRole): Promise<void> {
+    await this.run(async () => {
+      if (this.demoMode) {
+        this.accounts.update((list) =>
+          list.map((u) => (u.id === userId ? { ...u, role } : u))
+        );
+        return;
+      }
+      await api.updateProfileRole(this.client, userId, role);
+      this.accounts.update((list) =>
+        list.map((u) => (u.id === userId ? { ...u, role } : u))
+      );
     });
   }
 

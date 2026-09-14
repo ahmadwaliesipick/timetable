@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
-import { AppUser, UserRole } from '../../core/models';
+import { AppUser } from '../../core/models';
 import { SchoolStore } from '../../core/school.store';
 
 @Component({
@@ -24,7 +24,6 @@ export class LoginComponent {
   readonly email = signal('');
   readonly password = signal('');
   readonly fullName = signal('');
-  readonly role = signal<UserRole>('admin');
   readonly busy = signal(false);
   readonly error = signal('');
 
@@ -41,11 +40,12 @@ export class LoginComponent {
       if (this.mode() === 'signin') {
         await this.auth.signIn(this.email().trim(), this.password());
       } else {
+        // Public signup is always teacher; admins promote from School page.
         await this.auth.signUp(
           this.email().trim(),
           this.password(),
           this.fullName().trim() || this.email().trim(),
-          this.role()
+          'teacher'
         );
       }
       const user = this.auth.user();

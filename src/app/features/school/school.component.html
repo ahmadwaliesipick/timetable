@@ -118,4 +118,51 @@
       </div>
     </form>
   </div>
+
+  <section class="panel accounts-panel">
+    <div class="page-header">
+      <div>
+        <h2>Accounts</h2>
+        <p>New signups are teachers only. Promote someone to admin here.</p>
+      </div>
+    </div>
+    @if (accountsMessage()) {
+      <p class="notice">{{ accountsMessage() }}</p>
+    }
+    @if (!store.accounts().length) {
+      <div class="empty">No accounts found.</div>
+    } @else {
+      <div class="entity-list">
+        @for (u of store.accounts(); track u.id) {
+          <article class="entity-card">
+            <div>
+              <strong>{{ u.fullName }}</strong>
+              <div class="muted">{{ u.email }}</div>
+              <div class="muted">
+                Role: {{ u.role }}
+                @if (u.teacherId) {
+                  · linked to timetable teacher
+                } @else {
+                  · not linked to a teacher yet
+                }
+              </div>
+            </div>
+            <div class="row-actions">
+              @if (u.role !== 'admin') {
+                <button class="btn secondary" type="button" (click)="setRole(u, 'admin')">
+                  Make admin
+                </button>
+              } @else if (u.id !== auth.user()?.id) {
+                <button class="btn ghost" type="button" (click)="setRole(u, 'teacher')">
+                  Make teacher
+                </button>
+              } @else {
+                <span class="badge soft">You</span>
+              }
+            </div>
+          </article>
+        }
+      </div>
+    }
+  </section>
 </section>

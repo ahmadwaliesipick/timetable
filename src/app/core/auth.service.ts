@@ -164,15 +164,16 @@ export class AuthService {
     email: string,
     password: string,
     fullName: string,
-    role: UserRole = 'teacher'
+    _role: UserRole = 'teacher'
   ): Promise<void> {
     this.errorSignal.set(null);
     const client = getSupabase();
+    // Role is ignored: DB trigger always creates teacher accounts.
     const { data, error } = await client.auth.signUp({
       email,
       password,
       options: {
-        data: { full_name: fullName, role },
+        data: { full_name: fullName, role: 'teacher' },
       },
     });
     if (error) throw new Error(error.message);

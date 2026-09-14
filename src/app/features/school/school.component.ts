@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { SchoolProfile } from '../../core/models';
+import { AuthService } from '../../core/auth.service';
+import { AppUser, SchoolProfile, UserRole } from '../../core/models';
 import { SchoolStore } from '../../core/school.store';
 
 @Component({
@@ -11,6 +12,7 @@ import { SchoolStore } from '../../core/school.store';
   styleUrl: './school.component.scss',
 })
 export class SchoolComponent {
+  readonly auth = inject(AuthService);
   readonly store = inject(SchoolStore);
 
   readonly name = signal('');
@@ -27,10 +29,14 @@ export class SchoolComponent {
   readonly about = signal('');
   readonly busy = signal(false);
   readonly message = signal('');
+  readonly accountsMessage = signal('');
 
   constructor() {
     this.hydrate(this.store.profile());
     void this.store.loadProfile().then(() => this.hydrate(this.store.profile()));
+    void this.store.loadAccounts().catch((e) => {
+      this.accountsMessage.set(e instanceof Error ? e.message : 'Could not load accounts.');
+    });
   }
 
   private hydrate(p: SchoolProfile): void {
@@ -74,6 +80,24 @@ export class SchoolComponent {
       this.message.set(e instanceof Error ? e.message : 'Could not save school details.');
     } finally {
       this.busy.set(false);
+    }
+  }
+
+  async setRole(user: AppUser, role: UserRole): Promise<void> {
+    if (user.id === this.auth.user()?.id && role !== 'admin') {
+      this.accountsMessage.set('You cannot remove your own admin role here.');
+      return;
+    }
+    this.accountsMessage.set('');
+    try {
+      await this.store.setAccountRole(user.id, role);
+      this.accountsMessage.set(
+        role === 'admin'
+          ? `${user.fullName} is now an admin.`
+          : `${user.fullName} is now a teacher.`
+      );
+    } catch (e) {
+      this.accountsMessage.set(e instanceof Error ? e.message : 'Could not update role.');
     }
   }
 }

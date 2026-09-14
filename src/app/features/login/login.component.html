@@ -32,13 +32,7 @@
               <label>Full name</label>
               <input [ngModel]="fullName()" (ngModelChange)="fullName.set($event)" name="fullName" />
             </div>
-            <div class="field">
-              <label>Role</label>
-              <select [ngModel]="role()" (ngModelChange)="role.set($event)" name="role">
-                <option value="admin">Admin</option>
-                <option value="teacher">Teacher</option>
-              </select>
-            </div>
+            <p class="signup-note">New accounts are created as teachers. An admin can promote someone later from School.</p>
           }
           <div class="field">
             <label>Email</label>

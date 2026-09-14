@@ -3,6 +3,7 @@ import {
   Absence,
   Arrangement,
   ArrangementStatus,
+  AppUser,
   ClassSection,
   Period,
   SchoolData,
@@ -10,6 +11,7 @@ import {
   Subject,
   Teacher,
   TimetableSlot,
+  UserRole,
 } from './models';
 
 type TeacherRow = { id: string; name: string; email: string | null };
@@ -118,6 +120,30 @@ export async function saveSchoolProfile(
     .single();
   if (error) throw new Error(error.message);
   return mapSchoolProfile(data as SchoolProfileRow);
+}
+
+export async function fetchProfiles(client: SupabaseClient): Promise<AppUser[]> {
+  const { data, error } = await client
+    .from('profiles')
+    .select('id,email,full_name,role,teacher_id')
+    .order('full_name');
+  if (error) throw new Error(error.message);
+  return (data ?? []).map((row) => ({
+    id: row.id as string,
+    email: row.email as string,
+    fullName: row.full_name as string,
+    role: row.role as UserRole,
+    teacherId: (row.teacher_id as string | null) ?? null,
+  }));
+}
+
+export async function updateProfileRole(
+  client: SupabaseClient,
+  userId: string,
+  role: UserRole
+): Promise<void> {
+  const { error } = await client.from('profiles').update({ role }).eq('id', userId);
+  if (error) throw new Error(error.message);
 }
 
 export async function fetchSchoolData(client: SupabaseClient): Promise<SchoolData> {

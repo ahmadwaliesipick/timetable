@@ -148,27 +148,20 @@ create policy "admin write school_profile"
   using (public.is_admin())
   with check (public.is_admin());
 
--- Auto-create profile when a user signs up (role from user metadata, default teacher)
+-- Auto-create profile when a user signs up (always teacher; admins promote later)
 create or replace function public.handle_new_user()
 returns trigger
 language plpgsql
 security definer
 set search_path = public
 as $$
-declare
-  meta_role text := coalesce(new.raw_user_meta_data->>'role', 'teacher');
-  resolved_role public.user_role := 'teacher';
 begin
-  if meta_role = 'admin' then
-    resolved_role := 'admin';
-  end if;
-
   insert into public.profiles (id, email, full_name, role)
   values (
     new.id,
     new.email,
     coalesce(new.raw_user_meta_data->>'full_name', split_part(new.email, '@', 1)),
-    resolved_role
+    'teacher'
   );
   return new;
 end;
