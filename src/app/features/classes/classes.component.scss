@@ -1,4 +1,37 @@
-.desk-grid { display: grid; gap: 1rem; }
+.desk-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.hint {
+  margin: 0.35rem 0 0;
+  font-size: 0.92rem;
+  color: var(--muted);
+}
+
+.cover-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.cover-option input {
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-top: 0.2rem;
+}
+
 @media (min-width: 900px) {
-  .desk-grid { grid-template-columns: 0.9fr 1.1fr; align-items: start; }
+  .desk-grid {
+    grid-template-columns: 0.9fr 1.1fr;
+    align-items: start;
+  }
 }

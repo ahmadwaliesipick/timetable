@@ -16,17 +16,20 @@ export class ClassesComponent {
   readonly editingId = signal<string | null>(null);
   readonly name = signal('');
   readonly grade = signal('');
+  readonly needsCover = signal(true);
 
   startCreate(): void {
     this.editingId.set(null);
     this.name.set('');
     this.grade.set('');
+    this.needsCover.set(true);
   }
 
   startEdit(c: ClassSection): void {
     this.editingId.set(c.id);
     this.name.set(c.name);
     this.grade.set(c.grade ?? '');
+    this.needsCover.set(c.needsCover !== false);
     scrollToEditForm('class-form', 'class-name');
   }
 
@@ -36,6 +39,7 @@ export class ClassesComponent {
       id: this.editingId() ?? undefined,
       name: this.name().trim(),
       grade: this.grade().trim() || null,
+      needsCover: this.needsCover(),
     });
     this.startCreate();
   }

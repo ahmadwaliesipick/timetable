@@ -33,6 +33,19 @@
           <input [ngModel]="grade()" (ngModelChange)="grade.set($event)" name="grade" placeholder="7" />
         </div>
       </div>
+      <div class="field">
+        <label class="cover-option">
+          <input
+            type="checkbox"
+            [checked]="needsCover()"
+            (change)="needsCover.set($any($event.target).checked)"
+          />
+          Needs cover when teacher is absent
+        </label>
+        <p class="hint">
+          Turn off for classes that should not get substitute arrangements.
+        </p>
+      </div>
       <div class="row-actions">
         <button class="btn" type="submit">Save</button>
         <button class="btn secondary" type="button" (click)="startCreate()">Clear</button>
@@ -50,6 +63,9 @@
               <div>
                 <strong>{{ c.name }}</strong>
                 <div class="muted">Grade {{ c.grade || '—' }}</div>
+                @if (c.needsCover === false) {
+                  <span class="badge soft">No cover needed</span>
+                }
               </div>
               <div class="row-actions">
                 <button class="btn ghost" type="button" (click)="startEdit(c)">Edit</button>

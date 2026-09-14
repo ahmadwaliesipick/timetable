@@ -28,9 +28,9 @@ export function createSeedData(): SchoolData {
   ];
 
   const classSections: ClassSection[] = [
-    { id: 'c-7a', name: '7A', grade: '7' },
-    { id: 'c-7b', name: '7B', grade: '7' },
-    { id: 'c-8a', name: '8A', grade: '8' },
+    { id: 'c-7a', name: '7A', grade: '7', needsCover: true },
+    { id: 'c-7b', name: '7B', grade: '7', needsCover: true },
+    { id: 'c-8a', name: '8A', grade: '8', needsCover: true },
   ];
 
   const teachers: Teacher[] = [

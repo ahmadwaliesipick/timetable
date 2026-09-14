@@ -61,6 +61,7 @@ create table public.class_sections (
   id uuid primary key default gen_random_uuid(),
   name text not null unique,
   grade text,
+  needs_cover boolean not null default true,
   created_at timestamptz not null default now()
 );
 

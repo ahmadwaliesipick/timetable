@@ -92,4 +92,25 @@ describe('suggestArrangements', () => {
     const result = suggestArrangements(data, monday);
     expect(result.every((a) => a.originalTeacherId !== 't-ahmed')).toBeTrue();
   });
+
+  it('skips cover arrangements for classes marked needsCover false', () => {
+    const data = createSeedData();
+    const monday = '2026-09-14';
+    data.classSections.find((c) => c.id === 'c-7a')!.needsCover = false;
+    data.absences.push({
+      id: uid(),
+      teacherId: 't-ahmed',
+      absenceDate: monday,
+      reason: 'Sick',
+    });
+
+    const result = suggestArrangements(data, monday);
+    const classIds = result.map((a) => {
+      const slot = data.slots.find((s) => s.id === a.timetableSlotId);
+      return slot?.classSectionId;
+    });
+    expect(classIds.every((id) => id !== 'c-7a')).toBeTrue();
+    // Ahmed still has 8A on Monday which should still get cover
+    expect(classIds.some((id) => id === 'c-8a')).toBeTrue();
+  });
 });

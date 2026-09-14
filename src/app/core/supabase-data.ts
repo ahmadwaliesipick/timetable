@@ -16,7 +16,7 @@ import {
 
 type TeacherRow = { id: string; name: string; email: string | null; needs_cover: boolean | null };
 type SubjectRow = { id: string; name: string; code: string | null };
-type ClassRow = { id: string; name: string; grade: string | null };
+type ClassRow = { id: string; name: string; grade: string | null; needs_cover: boolean | null };
 type PeriodRow = {
   id: string;
   name: string;
@@ -159,7 +159,7 @@ export async function fetchSchoolData(client: SupabaseClient): Promise<SchoolDat
   ] = await Promise.all([
     client.from('teachers').select('id,name,email,needs_cover').order('name'),
     client.from('subjects').select('id,name,code').order('name'),
-    client.from('class_sections').select('id,name,grade').order('name'),
+    client.from('class_sections').select('id,name,grade,needs_cover').order('name'),
     client.from('periods').select('id,name,sort_order,start_time,end_time').order('sort_order'),
     client.from('timetable_slots').select('*'),
     client.from('absences').select('*').order('absence_date', { ascending: false }),
@@ -201,7 +201,12 @@ export async function fetchSchoolData(client: SupabaseClient): Promise<SchoolDat
       (s): Subject => ({ id: s.id, name: s.name, code: s.code })
     ),
     classSections: classSections.map(
-      (c): ClassSection => ({ id: c.id, name: c.name, grade: c.grade })
+      (c): ClassSection => ({
+        id: c.id,
+        name: c.name,
+        grade: c.grade,
+        needsCover: c.needs_cover !== false,
+      })
     ),
     periods: periods.map(
       (p): Period => ({
@@ -310,15 +315,29 @@ export async function saveClass(
   client: SupabaseClient,
   input: Omit<ClassSection, 'id'> & { id?: string }
 ): Promise<ClassSection> {
-  const payload = { name: input.name, grade: input.grade };
+  const payload = {
+    name: input.name,
+    grade: input.grade,
+    needs_cover: input.needsCover !== false,
+  };
   if (input.id) {
     const { error } = await client.from('class_sections').update(payload).eq('id', input.id);
     if (error) throw new Error(error.message);
-    return { id: input.id, ...payload };
+    return {
+      id: input.id,
+      name: input.name,
+      grade: input.grade,
+      needsCover: payload.needs_cover,
+    };
   }
   const { data, error } = await client.from('class_sections').insert(payload).select('id').single();
   if (error) throw new Error(error.message);
-  return { id: data.id as string, ...payload };
+  return {
+    id: data.id as string,
+    name: input.name,
+    grade: input.grade,
+    needsCover: payload.needs_cover,
+  };
 }
 
 export async function deleteClass(client: SupabaseClient, id: string): Promise<void> {

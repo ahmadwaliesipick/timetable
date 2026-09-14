@@ -20,6 +20,8 @@ export interface ClassSection {
   id: string;
   name: string;
   grade: string | null;
+  /** When false, absences for this class do not generate cover arrangements. */
+  needsCover: boolean;
 }
 
 export interface Period {
