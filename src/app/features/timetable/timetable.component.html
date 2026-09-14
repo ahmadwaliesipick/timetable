@@ -1,0 +1,98 @@
+<section class="page">
+  <div class="page-header">
+    <div>
+      <h1>Weekly timetable</h1>
+      <p>Feed the master schedule first — daily cover depends on these slots.</p>
+    </div>
+    <div class="day-tabs">
+      @for (d of days; track d) {
+        <button
+          type="button"
+          class="btn"
+          [class.secondary]="dayOfWeek() !== d"
+          (click)="dayOfWeek.set(d); startCreate()"
+        >
+          {{ dayLabels[d] }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <div class="desk-grid">
+    <form class="panel" (submit)="$event.preventDefault(); save()">
+      <h2>{{ editingId() ? 'Edit slot' : 'Add slot' }} · {{ dayLabels[dayOfWeek()] }}</h2>
+      @if (error()) {
+        <p class="err">{{ error() }}</p>
+      }
+      <div class="grid-form cols-2">
+        <div class="field">
+          <label>Period</label>
+          <select [ngModel]="periodId()" (ngModelChange)="periodId.set($event)" name="period">
+            @for (p of store.periods(); track p.id) {
+              <option [value]="p.id">{{ p.name }}</option>
+            }
+          </select>
+        </div>
+        <div class="field">
+          <label>Class</label>
+          <select [ngModel]="classSectionId()" (ngModelChange)="classSectionId.set($event)" name="class">
+            @for (c of store.classSections(); track c.id) {
+              <option [value]="c.id">{{ c.name }}</option>
+            }
+          </select>
+        </div>
+        <div class="field">
+          <label>Subject</label>
+          <select [ngModel]="subjectId()" (ngModelChange)="subjectId.set($event)" name="subject">
+            @for (s of store.subjects(); track s.id) {
+              <option [value]="s.id">{{ s.name }}</option>
+            }
+          </select>
+        </div>
+        <div class="field">
+          <label>Teacher</label>
+          <select [ngModel]="teacherId()" (ngModelChange)="teacherId.set($event)" name="teacher">
+            @for (t of store.teachers(); track t.id) {
+              <option [value]="t.id">{{ t.name }}</option>
+            }
+          </select>
+        </div>
+        <div class="field">
+          <label>Room</label>
+          <input [ngModel]="room()" (ngModelChange)="room.set($event)" name="room" />
+        </div>
+      </div>
+      <div class="row-actions">
+        <button class="btn" type="submit">Save slot</button>
+        <button class="btn secondary" type="button" (click)="startCreate()">Clear</button>
+      </div>
+    </form>
+
+    <section class="panel">
+      <h2>{{ dayLabels[dayOfWeek()] }} grid</h2>
+      @if (!daySlots().length) {
+        <div class="empty">No slots for this day yet.</div>
+      } @else {
+        <div class="slot-list">
+          @for (s of daySlots(); track s.id) {
+            <article class="slot-card">
+              <div>
+                <strong>{{ periodLabel(s.periodId) }} · {{ classLabel(s.classSectionId) }}</strong>
+                <div class="muted">
+                  {{ subjectLabel(s.subjectId) }} · {{ teacherLabel(s.teacherId) }}
+                  @if (s.room) {
+                    · {{ s.room }}
+                  }
+                </div>
+              </div>
+              <div class="row-actions">
+                <button class="btn ghost" type="button" (click)="startEdit(s)">Edit</button>
+                <button class="btn ghost" type="button" (click)="remove(s.id)">Delete</button>
+              </div>
+            </article>
+          }
+        </div>
+      }
+    </section>
+  </div>
+</section>

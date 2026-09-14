@@ -1,0 +1,48 @@
+<section class="page">
+  <div class="page-header">
+    <div>
+      <h1>Classes</h1>
+      <p>Sections that appear on the weekly timetable.</p>
+    </div>
+  </div>
+
+  <div class="desk-grid">
+    <form class="panel" (submit)="$event.preventDefault(); save()">
+      <h2>{{ editingId() ? 'Edit class' : 'Add class' }}</h2>
+      <div class="grid-form cols-2">
+        <div class="field">
+          <label>Name</label>
+          <input [ngModel]="name()" (ngModelChange)="name.set($event)" name="name" placeholder="7A" />
+        </div>
+        <div class="field">
+          <label>Grade</label>
+          <input [ngModel]="grade()" (ngModelChange)="grade.set($event)" name="grade" placeholder="7" />
+        </div>
+      </div>
+      <div class="row-actions">
+        <button class="btn" type="submit">Save</button>
+        <button class="btn secondary" type="button" (click)="startCreate()">Clear</button>
+      </div>
+    </form>
+
+    <section class="panel table-wrap">
+      <table class="data">
+        <thead>
+          <tr><th>Name</th><th>Grade</th><th></th></tr>
+        </thead>
+        <tbody>
+          @for (c of store.classSections(); track c.id) {
+            <tr>
+              <td>{{ c.name }}</td>
+              <td>{{ c.grade || '—' }}</td>
+              <td class="row-actions">
+                <button class="btn ghost" type="button" (click)="startEdit(c)">Edit</button>
+                <button class="btn ghost" type="button" (click)="remove(c.id)">Delete</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </section>
+  </div>
+</section>

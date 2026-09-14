@@ -1,0 +1,41 @@
+<div class="shell">
+  <header class="topbar">
+    <button class="menu-btn" type="button" (click)="toggleMenu()" aria-label="Toggle menu">☰</button>
+    <div class="brand">
+      <span class="brand-mark">TT</span>
+      <div>
+        <strong>Timetable Desk</strong>
+        <small>{{ store.demoMode ? 'Demo mode (local)' : 'Supabase' }}</small>
+      </div>
+    </div>
+    <div class="user-meta">
+      <span>{{ auth.user()?.fullName }}</span>
+      <button class="btn ghost" type="button" (click)="logout()">Sign out</button>
+    </div>
+  </header>
+
+  @if (store.lastError()) {
+    <div class="banner">{{ store.lastError() }}</div>
+  }
+  @if (store.loading()) {
+    <div class="banner soft">Loading school data…</div>
+  }
+
+  <div class="body">
+    <aside class="nav" [class.open]="menuOpen()">
+      <a routerLink="/daily" routerLinkActive="active" (click)="closeMenu()">Daily desk</a>
+      <a routerLink="/my-day" routerLinkActive="active" (click)="closeMenu()">My day</a>
+      @if (auth.isAdmin()) {
+        <a routerLink="/timetable" routerLinkActive="active" (click)="closeMenu()">Weekly timetable</a>
+        <a routerLink="/teachers" routerLinkActive="active" (click)="closeMenu()">Teachers</a>
+        <a routerLink="/classes" routerLinkActive="active" (click)="closeMenu()">Classes</a>
+        <a routerLink="/subjects" routerLinkActive="active" (click)="closeMenu()">Subjects</a>
+        <a routerLink="/periods" routerLinkActive="active" (click)="closeMenu()">Periods</a>
+      }
+    </aside>
+
+    <main class="content" (click)="closeMenu()">
+      <router-outlet />
+    </main>
+  </div>
+</div>

@@ -1,0 +1,4 @@
+.desk-grid { display: grid; gap: 1rem; }
+@media (min-width: 900px) {
+  .desk-grid { grid-template-columns: 0.9fr 1.1fr; align-items: start; }
+}

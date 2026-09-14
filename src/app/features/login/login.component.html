@@ -1,0 +1,95 @@
+<section class="login">
+  <div class="hero panel">
+    <p class="eyebrow">School operations</p>
+    <h1>Timetable Desk</h1>
+    <p>
+      Manage the weekly master timetable and arrange daily cover when teachers are absent —
+      with semi-automatic free-teacher suggestions.
+    </p>
+
+    @if (usingSupabase) {
+      <div class="accounts">
+        <div class="mode-tabs">
+          <button
+            type="button"
+            class="btn"
+            [class.secondary]="mode() !== 'signin'"
+            (click)="mode.set('signin')"
+          >
+            Sign in
+          </button>
+          <button
+            type="button"
+            class="btn"
+            [class.secondary]="mode() !== 'signup'"
+            (click)="mode.set('signup')"
+          >
+            Create account
+          </button>
+        </div>
+
+        <form (submit)="$event.preventDefault(); submit()">
+          @if (mode() === 'signup') {
+            <div class="field">
+              <label>Full name</label>
+              <input [ngModel]="fullName()" (ngModelChange)="fullName.set($event)" name="fullName" />
+            </div>
+            <div class="field">
+              <label>Role</label>
+              <select [ngModel]="role()" (ngModelChange)="role.set($event)" name="role">
+                <option value="admin">Admin</option>
+                <option value="teacher">Teacher</option>
+              </select>
+            </div>
+          }
+          <div class="field">
+            <label>Email</label>
+            <input
+              type="email"
+              required
+              [ngModel]="email()"
+              (ngModelChange)="email.set($event)"
+              name="email"
+              autocomplete="username"
+            />
+          </div>
+          <div class="field">
+            <label>Password</label>
+            <input
+              type="password"
+              required
+              minlength="6"
+              [ngModel]="password()"
+              (ngModelChange)="password.set($event)"
+              name="password"
+              autocomplete="current-password"
+            />
+          </div>
+          @if (error()) {
+            <p class="err">{{ error() }}</p>
+          }
+          <button class="btn" type="submit" [disabled]="busy()">
+            {{ busy() ? 'Please wait…' : mode() === 'signin' ? 'Sign in' : 'Create account' }}
+          </button>
+        </form>
+        <p class="hint">Connected to Supabase. First admin should use Create account with role Admin.</p>
+      </div>
+    } @else {
+      <div class="accounts">
+        <h2>Demo sign-in</h2>
+        <p>
+          Supabase keys are not set yet — using local demo data. Add your project URL and anon key
+          in <code>src/environments/environment.development.ts</code>.
+        </p>
+        <div class="account-list">
+          @for (user of users; track user.id) {
+            <button type="button" class="account" (click)="enterDemo(user)">
+              <strong>{{ user.fullName }}</strong>
+              <span>{{ user.role }} · {{ user.email }}</span>
+            </button>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</section>

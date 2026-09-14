@@ -1,0 +1,142 @@
+<section class="page">
+  <div class="page-header">
+    <div>
+      <h1>Daily desk</h1>
+      <p>Mark absences, generate free-teacher suggestions, then confirm cover.</p>
+    </div>
+    <div class="field date-field">
+      <label for="desk-date">Date</label>
+      <input
+        id="desk-date"
+        type="date"
+        [ngModel]="date()"
+        (ngModelChange)="onDateChange($event)"
+      />
+    </div>
+  </div>
+
+  @if (message()) {
+    <div class="panel notice">{{ message() }}</div>
+  }
+
+  <div class="desk-grid">
+    <section class="panel">
+      <h2>Absences</h2>
+      @if (auth.isAdmin() || auth.user()?.teacherId) {
+        <div class="grid-form cols-2">
+          <div class="field">
+            <label>Teacher</label>
+            <select [ngModel]="absenceTeacherId()" (ngModelChange)="absenceTeacherId.set($event)">
+              <option value="">Select…</option>
+              @for (t of store.teachers(); track t.id) {
+                <option [value]="t.id">{{ t.name }}</option>
+              }
+            </select>
+          </div>
+          <div class="field">
+            <label>Reason (optional)</label>
+            <input
+              [ngModel]="absenceReason()"
+              (ngModelChange)="absenceReason.set($event)"
+              placeholder="Sick leave"
+            />
+          </div>
+        </div>
+        <button class="btn" type="button" (click)="addAbsence()">Add absence</button>
+      }
+
+      <div class="stack" style="margin-top: 1rem">
+        @if (!absences().length) {
+          <div class="empty">No absences for this date.</div>
+        } @else {
+          @for (a of absences(); track a.id) {
+            <div class="absence-row">
+              <div>
+                <strong>{{ teacherLabel(a.teacherId) }}</strong>
+                <div class="muted">{{ a.reason || 'No reason given' }}</div>
+              </div>
+              @if (auth.isAdmin()) {
+                <button class="btn ghost" type="button" (click)="removeAbsence(a.id)">Remove</button>
+              }
+            </div>
+          }
+        }
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="page-header">
+        <div>
+          <h2>Cover arrangements</h2>
+          <p>Suggestions prefer same-subject teachers who are free that period.</p>
+        </div>
+        <div class="row-actions">
+          <button class="btn secondary" type="button" (click)="generate()">Generate suggestions</button>
+          @if (auth.isAdmin()) {
+            <button class="btn" type="button" (click)="confirmAll()">Confirm all</button>
+          }
+        </div>
+      </div>
+
+      @if (!arrangements().length) {
+        <div class="empty">No arrangements yet. Add absences and generate suggestions.</div>
+      } @else {
+        <div class="stack cards">
+          @for (item of arrangements(); track item.id) {
+            <article class="cover-card">
+              <header>
+                <div>
+                  <strong>
+                    {{ item.slot ? periodLabel(item.slot.periodId) : 'Period' }}
+                    ·
+                    {{ item.slot ? classLabel(item.slot.classSectionId) : 'Class' }}
+                  </strong>
+                  <div class="muted">
+                    {{ item.slot ? subjectLabel(item.slot.subjectId) : '' }}
+                    · was {{ teacherLabel(item.originalTeacherId) }}
+                  </div>
+                </div>
+                <span
+                  class="badge"
+                  [class.ok]="item.status === 'confirmed'"
+                  [class.warn]="item.status === 'unassigned'"
+                  [class.soft]="item.status === 'suggested'"
+                >
+                  {{ item.status }}
+                </span>
+              </header>
+
+              @if (auth.isAdmin()) {
+                <div class="field">
+                  <label>Substitute</label>
+                  <select
+                    [ngModel]="item.substituteTeacherId || ''"
+                    (ngModelChange)="setSubstitute(item.id, $event)"
+                  >
+                    <option value="">Unassigned</option>
+                    @for (c of candidateOptions(item.suggestedCandidateIds); track c!.id) {
+                      <option [value]="c!.id">{{ c!.name }}</option>
+                    }
+                  </select>
+                </div>
+                <button
+                  class="btn secondary"
+                  type="button"
+                  [disabled]="!item.substituteTeacherId || item.status === 'confirmed'"
+                  (click)="confirmOne(item.id)"
+                >
+                  Confirm
+                </button>
+              } @else {
+                <p>
+                  Cover:
+                  <strong>{{ teacherLabel(item.substituteTeacherId) }}</strong>
+                </p>
+              }
+            </article>
+          }
+        </div>
+      }
+    </section>
+  </div>
+</section>

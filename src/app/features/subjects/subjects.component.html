@@ -1,0 +1,48 @@
+<section class="page">
+  <div class="page-header">
+    <div>
+      <h1>Subjects</h1>
+      <p>Used on timetable cells and substitute matching.</p>
+    </div>
+  </div>
+
+  <div class="desk-grid">
+    <form class="panel" (submit)="$event.preventDefault(); save()">
+      <h2>{{ editingId() ? 'Edit subject' : 'Add subject' }}</h2>
+      <div class="grid-form cols-2">
+        <div class="field">
+          <label>Name</label>
+          <input [ngModel]="name()" (ngModelChange)="name.set($event)" name="name" />
+        </div>
+        <div class="field">
+          <label>Code</label>
+          <input [ngModel]="code()" (ngModelChange)="code.set($event)" name="code" />
+        </div>
+      </div>
+      <div class="row-actions">
+        <button class="btn" type="submit">Save</button>
+        <button class="btn secondary" type="button" (click)="startCreate()">Clear</button>
+      </div>
+    </form>
+
+    <section class="panel table-wrap">
+      <table class="data">
+        <thead>
+          <tr><th>Name</th><th>Code</th><th></th></tr>
+        </thead>
+        <tbody>
+          @for (s of store.subjects(); track s.id) {
+            <tr>
+              <td>{{ s.name }}</td>
+              <td>{{ s.code || '—' }}</td>
+              <td class="row-actions">
+                <button class="btn ghost" type="button" (click)="startEdit(s)">Edit</button>
+                <button class="btn ghost" type="button" (click)="remove(s.id)">Delete</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </section>
+  </div>
+</section>

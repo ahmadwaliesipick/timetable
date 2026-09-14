@@ -1,0 +1,16 @@
+.desk-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.err {
+  color: var(--warn);
+  font-weight: 600;
+}
+
+@media (min-width: 900px) {
+  .desk-grid {
+    grid-template-columns: 0.9fr 1.1fr;
+    align-items: start;
+  }
+}

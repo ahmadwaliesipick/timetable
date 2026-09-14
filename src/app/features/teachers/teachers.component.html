@@ -1,0 +1,71 @@
+<section class="page">
+  <div class="page-header">
+    <div>
+      <h1>Teachers</h1>
+      <p>Subject tags improve substitute ranking.</p>
+    </div>
+    <button class="btn secondary" type="button" (click)="store.resetDemoData()">Reset demo data</button>
+  </div>
+
+  <div class="desk-grid">
+    <form class="panel" (submit)="$event.preventDefault(); save()">
+      <h2>{{ editingId() ? 'Edit teacher' : 'Add teacher' }}</h2>
+      @if (error()) {
+        <p class="err">{{ error() }}</p>
+      }
+      <div class="field">
+        <label>Name</label>
+        <input [ngModel]="name()" (ngModelChange)="name.set($event)" name="name" />
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input [ngModel]="email()" (ngModelChange)="email.set($event)" name="email" />
+      </div>
+      <div class="field">
+        <label>Subjects they can teach</label>
+        <div class="checkbox-grid">
+          @for (s of store.subjects(); track s.id) {
+            <label>
+              <input
+                type="checkbox"
+                [checked]="subjectIds().includes(s.id)"
+                (change)="toggleSubject(s.id, $any($event.target).checked)"
+              />
+              {{ s.name }}
+            </label>
+          }
+        </div>
+      </div>
+      <div class="row-actions">
+        <button class="btn" type="submit">Save</button>
+        <button class="btn secondary" type="button" (click)="startCreate()">Clear</button>
+      </div>
+    </form>
+
+    <section class="panel table-wrap">
+      <table class="data">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Subjects</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (t of store.teachers(); track t.id) {
+            <tr>
+              <td>{{ t.name }}</td>
+              <td>{{ t.email || '—' }}</td>
+              <td>{{ subjectNames(t.subjectIds) || '—' }}</td>
+              <td class="row-actions">
+                <button class="btn ghost" type="button" (click)="startEdit(t)">Edit</button>
+                <button class="btn ghost" type="button" (click)="remove(t.id)">Delete</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </section>
+  </div>
+</section>

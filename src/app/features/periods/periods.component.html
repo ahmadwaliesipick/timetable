@@ -1,0 +1,57 @@
+<section class="page">
+  <div class="page-header">
+    <div>
+      <h1>Periods</h1>
+      <p>Bell schedule used by the weekly grid and daily cover.</p>
+    </div>
+  </div>
+
+  <div class="desk-grid">
+    <form class="panel" (submit)="$event.preventDefault(); save()">
+      <h2>{{ editingId() ? 'Edit period' : 'Add period' }}</h2>
+      <div class="grid-form cols-2">
+        <div class="field">
+          <label>Name</label>
+          <input [ngModel]="name()" (ngModelChange)="name.set($event)" name="name" />
+        </div>
+        <div class="field">
+          <label>Order</label>
+          <input type="number" [ngModel]="sortOrder()" (ngModelChange)="sortOrder.set(+$event)" name="order" />
+        </div>
+        <div class="field">
+          <label>Start</label>
+          <input type="time" [ngModel]="startTime()" (ngModelChange)="startTime.set($event)" name="start" />
+        </div>
+        <div class="field">
+          <label>End</label>
+          <input type="time" [ngModel]="endTime()" (ngModelChange)="endTime.set($event)" name="end" />
+        </div>
+      </div>
+      <div class="row-actions">
+        <button class="btn" type="submit">Save</button>
+        <button class="btn secondary" type="button" (click)="startCreate()">Clear</button>
+      </div>
+    </form>
+
+    <section class="panel table-wrap">
+      <table class="data">
+        <thead>
+          <tr><th>Order</th><th>Name</th><th>Time</th><th></th></tr>
+        </thead>
+        <tbody>
+          @for (p of store.periods(); track p.id) {
+            <tr>
+              <td>{{ p.sortOrder }}</td>
+              <td>{{ p.name }}</td>
+              <td>{{ p.startTime || '—' }} – {{ p.endTime || '—' }}</td>
+              <td class="row-actions">
+                <button class="btn ghost" type="button" (click)="startEdit(p)">Edit</button>
+                <button class="btn ghost" type="button" (click)="remove(p.id)">Delete</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </section>
+  </div>
+</section>
