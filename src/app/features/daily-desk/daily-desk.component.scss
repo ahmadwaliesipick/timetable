@@ -36,6 +36,39 @@
   font-size: 0.9rem;
 }
 
+.cover-header {
+  display: grid;
+  gap: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.cover-header h2 {
+  margin-bottom: 0.25rem;
+}
+
+.cover-header p {
+  margin-bottom: 0;
+}
+
+.cover-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.cover-actions .btn {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.65rem 0.55rem;
+  font-size: 0.92rem;
+  line-height: 1.2;
+  white-space: normal;
+}
+
+.cover-actions .action-wide {
+  grid-column: 1 / -1;
+}
+
 .cover-card {
   border: 1px solid var(--line);
   border-radius: 12px;
@@ -51,18 +84,52 @@
   margin-bottom: 0.75rem;
 }
 
+.cover-card .confirm-one {
+  width: 100%;
+  min-height: 2.75rem;
+}
+
+@media (min-width: 640px) {
+  .cover-actions {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .cover-actions .btn {
+    width: auto;
+    min-height: 0;
+    white-space: nowrap;
+  }
+
+  .cover-actions .action-wide {
+    grid-column: auto;
+  }
+
+  .cover-card .confirm-one {
+    width: auto;
+    min-height: 0;
+  }
+}
+
 @media (max-width: 640px) {
   .absence-row {
     flex-direction: column;
+    align-items: stretch;
+  }
+
+  .absence-row .btn {
+    width: 100%;
+    min-height: 2.75rem;
+  }
+
+  .cover-card header {
+    flex-wrap: wrap;
     align-items: flex-start;
   }
 
-  .desk-grid .row-actions {
-    width: 100%;
-  }
-
-  .desk-grid .row-actions .btn {
-    flex: 1;
+  .cover-panel .empty {
+    padding: 1.1rem 0.85rem;
+    font-size: 0.95rem;
   }
 }
 
@@ -70,6 +137,23 @@
   .desk-grid {
     grid-template-columns: 0.9fr 1.1fr;
     align-items: start;
+  }
+
+  .cover-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 0.85rem;
+  }
+
+  .cover-header > div:first-child {
+    flex: 1 1 14rem;
+  }
+
+  .cover-actions {
+    flex: 0 1 auto;
+    justify-content: flex-end;
   }
 }
 
