@@ -1,5 +1,5 @@
 .shell {
-  min-height: 100vh;
+  min-height: 100dvh;
   display: grid;
   grid-template-rows: auto 1fr;
 }
@@ -7,10 +7,10 @@
 .topbar {
   display: flex;
   align-items: center;
-  gap: 0.85rem;
-  padding: 0.85rem 1rem;
+  gap: 0.65rem;
+  padding: 0.7rem 0.85rem;
   border-bottom: 1px solid var(--line);
-  background: rgba(255, 253, 248, 0.92);
+  background: rgba(255, 253, 248, 0.94);
   backdrop-filter: blur(8px);
   position: sticky;
   top: 0;
@@ -19,55 +19,83 @@
 
 .menu-btn {
   display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border: 1px solid var(--line);
   background: white;
   border-radius: 10px;
   width: 2.4rem;
   height: 2.4rem;
+  flex-shrink: 0;
   cursor: pointer;
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 0.7rem;
+  gap: 0.55rem;
   flex: 1;
+  min-width: 0;
 }
 
 .brand-mark {
-  width: 2.4rem;
-  height: 2.4rem;
-  border-radius: 12px;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 10px;
   display: grid;
   place-items: center;
   background: var(--accent);
   color: white;
   font-family: var(--font-display);
   font-weight: 700;
+  flex-shrink: 0;
+  font-size: 0.85rem;
+}
+
+.brand > div {
+  min-width: 0;
 }
 
 .brand strong {
   display: block;
   font-family: var(--font-display);
-  font-size: 1.05rem;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .brand small {
+  display: block;
   color: var(--muted);
+  font-size: 0.75rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .user-meta {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 0.92rem;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.user-meta > span {
+  display: none;
+  max-width: 9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .banner {
-  padding: 0.65rem 1rem;
+  padding: 0.6rem 0.85rem;
   background: var(--warn-soft);
   color: var(--warn);
   font-weight: 600;
+  font-size: 0.9rem;
   border-bottom: 1px solid var(--line);
 }
 
@@ -84,18 +112,19 @@
 
 .nav {
   position: fixed;
-  inset: 3.7rem auto 0 0;
-  width: min(80vw, 260px);
+  inset: 3.5rem auto 0 0;
+  width: min(84vw, 280px);
   background: var(--panel);
   border-right: 1px solid var(--line);
-  padding: 1rem;
+  padding: 0.85rem;
   display: grid;
-  gap: 0.25rem;
+  gap: 0.2rem;
   align-content: start;
   transform: translateX(-105%);
   transition: transform 0.2s ease;
   z-index: 15;
   box-shadow: var(--shadow);
+  overflow-y: auto;
 }
 
 .nav.open {
@@ -103,7 +132,7 @@
 }
 
 .nav a {
-  padding: 0.7rem 0.8rem;
+  padding: 0.75rem 0.85rem;
   border-radius: 10px;
   color: var(--muted);
   font-weight: 600;
@@ -116,14 +145,33 @@
 }
 
 .content {
-  padding: 1rem;
+  padding: 0.85rem;
   width: min(1100px, 100%);
   margin: 0 auto;
+  min-width: 0;
+}
+
+@media (min-width: 640px) {
+  .user-meta > span {
+    display: inline;
+  }
 }
 
 @media (min-width: 900px) {
   .menu-btn {
     display: none;
+  }
+
+  .topbar {
+    padding: 0.85rem 1rem;
+  }
+
+  .brand strong {
+    font-size: 1.05rem;
+  }
+
+  .brand small {
+    font-size: 0.82rem;
   }
 
   .body {
@@ -133,13 +181,13 @@
   .nav {
     position: sticky;
     top: 3.7rem;
-    height: calc(100vh - 3.7rem);
+    height: calc(100dvh - 3.7rem);
     transform: none;
     box-shadow: none;
     width: auto;
   }
 
   .content {
-    padding: 1.5rem 1.75rem 2.5rem;
+    padding: 1.35rem 1.5rem 2.25rem;
   }
 }

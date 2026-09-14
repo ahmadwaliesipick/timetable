@@ -2,34 +2,7 @@
   <div class="hero panel">
     <p class="eyebrow">{{ store.profile().directorate }}</p>
     <h1>{{ store.profile().name }}</h1>
-    <p class="place">{{ store.profile().tagline }} · Timetable Desk</p>
-    <p>
-      {{ store.profile().about }}
-    </p>
-    <p>
-      Manage the weekly master timetable and arrange daily cover when teachers are absent —
-      with semi-automatic free-teacher suggestions.
-    </p>
-    <dl class="school-facts">
-      @if (store.profile().address) {
-        <div>
-          <dt>Address</dt>
-          <dd>{{ store.profile().address }}</dd>
-        </div>
-      }
-      @if (store.profile().phone) {
-        <div>
-          <dt>Phone</dt>
-          <dd>{{ store.profile().phone }}</dd>
-        </div>
-      }
-      @if (store.profile().affiliation) {
-        <div>
-          <dt>Board</dt>
-          <dd>{{ store.profile().affiliation }}</dd>
-        </div>
-      }
-    </dl>
+    <p class="tag">Timetable Desk</p>
 
     @if (usingSupabase) {
       <div class="accounts">
@@ -92,24 +65,19 @@
           @if (error()) {
             <p class="err">{{ error() }}</p>
           }
-          <button class="btn" type="submit" [disabled]="busy()">
+          <button class="btn submit" type="submit" [disabled]="busy()">
             {{ busy() ? 'Please wait…' : mode() === 'signin' ? 'Sign in' : 'Create account' }}
           </button>
         </form>
-        <p class="hint">Connected to Supabase. First admin should use Create account with role Admin.</p>
       </div>
     } @else {
       <div class="accounts">
-        <h2>Demo sign-in</h2>
-        <p>
-          Supabase keys are not set yet — using local demo data. Add your project URL and anon key
-          in <code>src/environments/environment.development.ts</code>.
-        </p>
+        <p class="demo-note">Demo mode</p>
         <div class="account-list">
           @for (user of users; track user.id) {
             <button type="button" class="account" (click)="enterDemo(user)">
               <strong>{{ user.fullName }}</strong>
-              <span>{{ user.role }} · {{ user.email }}</span>
+              <span>{{ user.role }}</span>
             </button>
           }
         </div>

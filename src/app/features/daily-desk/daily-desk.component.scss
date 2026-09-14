@@ -1,6 +1,13 @@
 .date-field {
   margin: 0;
-  min-width: 180px;
+  min-width: min(180px, 100%);
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .date-field {
+    width: auto;
+  }
 }
 
 .notice {
@@ -42,6 +49,21 @@
   justify-content: space-between;
   gap: 0.75rem;
   margin-bottom: 0.75rem;
+}
+
+@media (max-width: 640px) {
+  .absence-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .desk-grid .row-actions {
+    width: 100%;
+  }
+
+  .desk-grid .row-actions .btn {
+    flex: 1;
+  }
 }
 
 @media (min-width: 900px) {
