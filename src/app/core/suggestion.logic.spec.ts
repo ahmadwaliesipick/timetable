@@ -5,19 +5,76 @@ import { Absence, uid } from './models';
 describe('suggestArrangements', () => {
   it('suggests a free teacher for absent slots on Monday', () => {
     const data = createSeedData();
-    // Pick a Monday date
     const monday = '2026-09-14';
-    const absence: Absence = {
+    data.absences.push({
       id: uid(),
       teacherId: 't-ahmed',
       absenceDate: monday,
       reason: 'Sick',
-    };
-    data.absences.push(absence);
+    });
 
     const result = suggestArrangements(data, monday);
     expect(result.length).toBeGreaterThan(0);
     expect(result.every((a) => a.originalTeacherId === 't-ahmed')).toBeTrue();
     expect(result.some((a) => a.substituteTeacherId && a.status === 'suggested')).toBeTrue();
+  });
+
+  it('prefers lighter-loaded free teachers when subjects match equally', () => {
+    const data = createSeedData();
+    const monday = '2026-09-14';
+
+    // Both Sara and Fatima can cover History; Fatima already has more Monday load in seed.
+    // Make Omar able to teach History too, but give him zero Monday slots so he is lightest.
+    const omar = data.teachers.find((t) => t.id === 't-omar')!;
+    omar.subjectIds = [...omar.subjectIds, 's-hist'];
+
+    // Remove Omar's Monday slots so his day burden is 0
+    data.slots = data.slots.filter(
+      (s) => !(s.dayOfWeek === 1 && s.teacherId === 't-omar')
+    );
+
+    data.absences.push({
+      id: uid(),
+      teacherId: 't-fatima',
+      absenceDate: monday,
+      reason: 'Leave',
+    } as Absence);
+
+    const result = suggestArrangements(data, monday);
+    const histGaps = result.filter((a) => {
+      const slot = data.slots.find((s) => s.id === a.timetableSlotId);
+      return slot?.subjectId === 's-hist';
+    });
+
+    expect(histGaps.length).toBeGreaterThan(0);
+    // Omar has subject match + lowest day burden among free History teachers
+    expect(histGaps[0].substituteTeacherId).toBe('t-omar');
+  });
+
+  it('spreads multiple covers across teachers instead of stacking on one', () => {
+    const data = createSeedData();
+    const monday = '2026-09-14';
+
+    // Give Sara and Fatima Math so both can cover Ahmed's Math gaps
+    data.teachers.find((t) => t.id === 't-sara')!.subjectIds = ['s-eng', 's-math'];
+    data.teachers.find((t) => t.id === 't-fatima')!.subjectIds = ['s-hist', 's-math'];
+    data.teachers.find((t) => t.id === 't-omar')!.subjectIds = ['s-sci', 's-math'];
+
+    data.absences.push({
+      id: uid(),
+      teacherId: 't-ahmed',
+      absenceDate: monday,
+      reason: 'Sick',
+    });
+
+    const result = suggestArrangements(data, monday);
+    const subs = result
+      .map((a) => a.substituteTeacherId)
+      .filter((id): id is string => !!id);
+
+    expect(subs.length).toBeGreaterThan(1);
+    // Not all covers should land on the same teacher when others are free
+    const unique = new Set(subs);
+    expect(unique.size).toBeGreaterThan(1);
   });
 });
