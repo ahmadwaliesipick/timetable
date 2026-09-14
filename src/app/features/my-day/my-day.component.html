@@ -11,7 +11,10 @@
   </div>
 
   @if (!auth.user()?.teacherId) {
-    <div class="panel empty">Admin accounts use Daily desk. Sign in as a teacher to see personal schedule.</div>
+    <div class="panel empty">
+      This login is not linked to a teacher on the timetable yet.
+      Ask an admin to link your account, or sign up with the same email as your teacher record.
+    </div>
   } @else {
     <div class="desk-grid">
       <section class="panel">

@@ -4,7 +4,9 @@
       <h1>Teachers</h1>
       <p>Subject tags improve substitute ranking.</p>
     </div>
-    <button class="btn secondary" type="button" (click)="store.resetDemoData()">Reset demo data</button>
+    @if (store.demoMode) {
+      <button class="btn secondary" type="button" (click)="store.resetDemoData()">Reset demo data</button>
+    }
   </div>
 
   <div class="desk-grid">

@@ -106,14 +106,41 @@ export class AuthService {
       return;
     }
 
+    let teacherId = data.teacher_id as string | null;
+    if (!teacherId && email) {
+      teacherId = await this.tryLinkTeacherByEmail(userId, email);
+    }
+
     this.userSignal.set({
       id: data.id,
       email: data.email,
       fullName: data.full_name,
       role: data.role as UserRole,
-      teacherId: data.teacher_id,
+      teacherId,
     });
     this.errorSignal.set(null);
+  }
+
+  /** If profile has no teacher link, match by email to a teachers row. */
+  private async tryLinkTeacherByEmail(userId: string, email: string): Promise<string | null> {
+    try {
+      const client = getSupabase();
+      const { data: teacher } = await client
+        .from('teachers')
+        .select('id')
+        .ilike('email', email.trim())
+        .maybeSingle();
+      if (!teacher?.id) return null;
+
+      const { error } = await client
+        .from('profiles')
+        .update({ teacher_id: teacher.id })
+        .eq('id', userId);
+      if (error) return null;
+      return teacher.id as string;
+    } catch {
+      return null;
+    }
   }
 
   /** Demo-only quick login */
