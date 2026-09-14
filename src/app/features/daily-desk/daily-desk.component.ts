@@ -2,6 +2,12 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../core/auth.service';
 import {
+  buildDailyBoardRows,
+  buildWhatsAppMessage,
+  openDailyBoardPrint,
+  openWhatsAppShare,
+} from '../../core/daily-board-export';
+import {
   className,
   periodName,
   subjectName,
@@ -82,5 +88,50 @@ export class DailyDeskComponent {
     const ids = suggestedIds?.length ? suggestedIds : this.store.teachers().map((t) => t.id);
     const map = new Map(this.store.teachers().map((t) => [t.id, t]));
     return ids.map((id) => map.get(id)).filter(Boolean);
+  }
+
+  private boardRows(confirmedOnly: boolean) {
+    return buildDailyBoardRows(
+      this.store.arrangementsForDate(this.date()),
+      this.store.slots(),
+      this.store.teachers(),
+      this.store.subjects(),
+      this.store.classSections(),
+      this.store.periods(),
+      confirmedOnly
+    );
+  }
+
+  exportPdf(): void {
+    try {
+      openDailyBoardPrint(
+        this.store.profile(),
+        this.date(),
+        this.absences(),
+        this.boardRows(false),
+        this.store.teachers()
+      );
+      this.message.set('Print dialog opened — choose Save as PDF, then share in WhatsApp.');
+    } catch (e) {
+      this.message.set(e instanceof Error ? e.message : 'Could not open PDF export.');
+    }
+  }
+
+  shareWhatsApp(): void {
+    const rows = this.boardRows(true);
+    const sourceRows = rows.length ? rows : this.boardRows(false);
+    const text = buildWhatsAppMessage(
+      this.store.profile(),
+      this.date(),
+      this.absences(),
+      sourceRows,
+      this.store.teachers()
+    );
+    openWhatsAppShare(text);
+    this.message.set(
+      rows.length
+        ? 'WhatsApp opened with confirmed covers. Pick your teachers group to send.'
+        : 'WhatsApp opened with current board (confirm covers for a cleaner message).'
+    );
   }
 }
