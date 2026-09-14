@@ -10,6 +10,15 @@
   width: min(400px, 100%);
   padding: 1.25rem 1.15rem 1.35rem;
   animation: rise 0.4s ease both;
+  text-align: center;
+}
+
+.crest {
+  display: block;
+  width: 5.75rem;
+  height: 5.75rem;
+  object-fit: contain;
+  margin: 0 auto 0.7rem;
 }
 
 .eyebrow {
@@ -39,6 +48,7 @@
   margin-top: 1.15rem;
   padding-top: 1.05rem;
   border-top: 1px solid var(--line);
+  text-align: left;
 }
 
 .mode-tabs {
