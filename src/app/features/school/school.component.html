@@ -1,0 +1,120 @@
+<section class="page">
+  <div class="page-header">
+    <div>
+      <h1>School</h1>
+      <p>Shown on the sign-in page and in the app header. Edit anything that needs correcting.</p>
+    </div>
+  </div>
+
+  <div class="desk-grid">
+    <section class="panel preview">
+      <p class="eyebrow">{{ store.profile().directorate || 'School' }}</p>
+      <h2>{{ store.profile().name }}</h2>
+      <p class="lede">{{ store.profile().about }}</p>
+      <dl class="facts">
+        @if (store.profile().address) {
+          <div>
+            <dt>Address</dt>
+            <dd>{{ store.profile().address }}</dd>
+          </div>
+        }
+        @if (store.profile().phone) {
+          <div>
+            <dt>Phone</dt>
+            <dd>{{ store.profile().phone }}</dd>
+          </div>
+        }
+        @if (store.profile().email) {
+          <div>
+            <dt>Email</dt>
+            <dd>{{ store.profile().email }}</dd>
+          </div>
+        }
+        @if (store.profile().affiliation) {
+          <div>
+            <dt>Board</dt>
+            <dd>{{ store.profile().affiliation }}</dd>
+          </div>
+        }
+        @if (store.profile().establishedYear) {
+          <div>
+            <dt>Established</dt>
+            <dd>{{ store.profile().establishedYear }}</dd>
+          </div>
+        }
+      </dl>
+      @if (store.profile().mapsUrl) {
+        <a class="btn ghost" [href]="store.profile().mapsUrl" target="_blank" rel="noreferrer">
+          Open map
+        </a>
+      }
+    </section>
+
+    <form class="panel" (submit)="$event.preventDefault(); save()">
+      <h2>Edit details</h2>
+      @if (message()) {
+        <p class="notice">{{ message() }}</p>
+      }
+      <div class="grid-form cols-2">
+        <div class="field">
+          <label>Full name</label>
+          <input [ngModel]="name()" (ngModelChange)="name.set($event)" name="name" />
+        </div>
+        <div class="field">
+          <label>Short name</label>
+          <input [ngModel]="shortName()" (ngModelChange)="shortName.set($event)" name="shortName" />
+        </div>
+        <div class="field">
+          <label>Location / tagline</label>
+          <input [ngModel]="tagline()" (ngModelChange)="tagline.set($event)" name="tagline" />
+        </div>
+        <div class="field">
+          <label>Established</label>
+          <input
+            type="number"
+            [ngModel]="establishedYear()"
+            (ngModelChange)="establishedYear.set($event)"
+            name="year"
+          />
+        </div>
+        <div class="field span-2">
+          <label>Address</label>
+          <input [ngModel]="address()" (ngModelChange)="address.set($event)" name="address" />
+        </div>
+        <div class="field">
+          <label>Phone</label>
+          <input [ngModel]="phone()" (ngModelChange)="phone.set($event)" name="phone" />
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input [ngModel]="email()" (ngModelChange)="email.set($event)" name="email" />
+        </div>
+        <div class="field">
+          <label>Website</label>
+          <input [ngModel]="website()" (ngModelChange)="website.set($event)" name="website" />
+        </div>
+        <div class="field">
+          <label>Google Maps link</label>
+          <input [ngModel]="mapsUrl()" (ngModelChange)="mapsUrl.set($event)" name="mapsUrl" />
+        </div>
+        <div class="field">
+          <label>Affiliation</label>
+          <input [ngModel]="affiliation()" (ngModelChange)="affiliation.set($event)" name="affiliation" />
+        </div>
+        <div class="field">
+          <label>Directorate</label>
+          <input [ngModel]="directorate()" (ngModelChange)="directorate.set($event)" name="directorate" />
+        </div>
+        <div class="field span-2">
+          <label>About</label>
+          <textarea rows="4" [ngModel]="about()" (ngModelChange)="about.set($event)" name="about"></textarea>
+        </div>
+      </div>
+      <div class="row-actions">
+        <button class="btn" type="submit" [disabled]="busy()">
+          {{ busy() ? 'Saving…' : 'Save school info' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</section>

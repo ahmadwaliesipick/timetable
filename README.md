@@ -1,6 +1,8 @@
-# Timetable Desk
+# Timetable Desk — F.G Public School No.4 (Girls)
 
-Angular app for school weekly timetables and **semi-automatic daily teacher cover**, backed by **Supabase** (Postgres + Auth).
+Angular app for **FGPS No.4 Girls, Lahore Cantt**: weekly timetables and **semi-automatic daily teacher cover**, backed by **Supabase** (Postgres + Auth).
+
+School details (name, address, phone, board) live in `school_profile` and can be edited in-app by an admin under **School**.
 
 ## 1. Create a Supabase project
 
@@ -55,8 +57,18 @@ Suggestion ranking stays in the browser (same subject + free period).
 
 ## Deploy frontend (Vercel)
 
-Build output: `dist/web/browser`  
-Set the same `supabaseUrl` / `supabaseAnonKey` in production environment file or CI env injection before build.
+Config: [`vercel.json`](vercel.json) — build `npm run build`, output `dist/web/browser`, SPA rewrites.
+
+```bash
+npx vercel login
+npx vercel --prod
+```
+
+After deploy, in Supabase → **Authentication → URL Configuration**:
+- **Site URL** = your Vercel URL (e.g. `https://your-app.vercel.app`)
+- **Redirect URLs** include that origin
+
+Production keys are in [`src/environments/environment.ts`](src/environments/environment.ts).
 
 ## Stack
 

@@ -2,10 +2,10 @@
   <header class="topbar">
     <button class="menu-btn" type="button" (click)="toggleMenu()" aria-label="Toggle menu">☰</button>
     <div class="brand">
-      <span class="brand-mark">TT</span>
+      <span class="brand-mark">FG</span>
       <div>
-        <strong>Timetable Desk</strong>
-        <small>{{ store.demoMode ? 'Demo mode (local)' : 'Supabase' }}</small>
+        <strong>{{ store.profile().shortName }}</strong>
+        <small>{{ store.profile().tagline }} · Timetable</small>
       </div>
     </div>
     <div class="user-meta">
@@ -31,6 +31,7 @@
         <a routerLink="/classes" routerLinkActive="active" (click)="closeMenu()">Classes</a>
         <a routerLink="/subjects" routerLinkActive="active" (click)="closeMenu()">Subjects</a>
         <a routerLink="/periods" routerLinkActive="active" (click)="closeMenu()">Periods</a>
+        <a routerLink="/school" routerLinkActive="active" (click)="closeMenu()">School</a>
       }
     </aside>
 

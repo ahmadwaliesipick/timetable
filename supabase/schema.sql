@@ -15,6 +15,23 @@ create table public.profiles (
   created_at timestamptz not null default now()
 );
 
+create table public.school_profile (
+  id smallint primary key default 1 check (id = 1),
+  name text not null,
+  short_name text not null,
+  tagline text,
+  address text,
+  phone text,
+  email text,
+  website text,
+  maps_url text,
+  affiliation text,
+  directorate text,
+  established_year int,
+  about text,
+  updated_at timestamptz not null default now()
+);
+
 create table public.teachers (
   id uuid primary key default gen_random_uuid(),
   name text not null,
@@ -93,6 +110,7 @@ create index arrangements_date_idx on public.arrangements (arrangement_date);
 create index timetable_slots_teacher_idx on public.timetable_slots (teacher_id, day_of_week);
 
 alter table public.profiles enable row level security;
+alter table public.school_profile enable row level security;
 alter table public.teachers enable row level security;
 alter table public.subjects enable row level security;
 alter table public.teacher_subjects enable row level security;
@@ -120,6 +138,15 @@ create policy "profiles read own or admin"
 create policy "profiles update own or admin"
   on public.profiles for update
   using (auth.uid() = id or public.is_admin());
+
+create policy "anyone can read school_profile"
+  on public.school_profile for select
+  using (true);
+
+create policy "admin write school_profile"
+  on public.school_profile for all
+  using (public.is_admin())
+  with check (public.is_admin());
 
 -- Auto-create profile when a user signs up (role from user metadata, default teacher)
 create or replace function public.handle_new_user()

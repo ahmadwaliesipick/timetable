@@ -6,6 +6,7 @@ import {
   ClassSection,
   Period,
   SchoolData,
+  SchoolProfile,
   Subject,
   Teacher,
   TimetableSlot,
@@ -45,10 +46,78 @@ type ArrangementRow = {
   status: ArrangementStatus;
 };
 type TeacherSubjectRow = { teacher_id: string; subject_id: string };
+type SchoolProfileRow = {
+  id: number;
+  name: string;
+  short_name: string;
+  tagline: string | null;
+  address: string | null;
+  phone: string | null;
+  email: string | null;
+  website: string | null;
+  maps_url: string | null;
+  affiliation: string | null;
+  directorate: string | null;
+  established_year: number | null;
+  about: string | null;
+};
+
+function mapSchoolProfile(row: SchoolProfileRow): SchoolProfile {
+  return {
+    id: row.id,
+    name: row.name,
+    shortName: row.short_name,
+    tagline: row.tagline ?? '',
+    address: row.address ?? '',
+    phone: row.phone ?? '',
+    email: row.email ?? '',
+    website: row.website ?? '',
+    mapsUrl: row.maps_url ?? '',
+    affiliation: row.affiliation ?? '',
+    directorate: row.directorate ?? '',
+    establishedYear: row.established_year,
+    about: row.about ?? '',
+  };
+}
 
 function assertOk<T>(label: string, error: { message: string } | null, data: T): T {
   if (error) throw new Error(`${label}: ${error.message}`);
   return data;
+}
+
+export async function fetchSchoolProfile(client: SupabaseClient): Promise<SchoolProfile | null> {
+  const { data, error } = await client.from('school_profile').select('*').eq('id', 1).maybeSingle();
+  if (error) throw new Error(`school_profile: ${error.message}`);
+  return data ? mapSchoolProfile(data as SchoolProfileRow) : null;
+}
+
+export async function saveSchoolProfile(
+  client: SupabaseClient,
+  input: SchoolProfile
+): Promise<SchoolProfile> {
+  const payload = {
+    id: 1,
+    name: input.name,
+    short_name: input.shortName,
+    tagline: input.tagline || null,
+    address: input.address || null,
+    phone: input.phone || null,
+    email: input.email || null,
+    website: input.website || null,
+    maps_url: input.mapsUrl || null,
+    affiliation: input.affiliation || null,
+    directorate: input.directorate || null,
+    established_year: input.establishedYear,
+    about: input.about || null,
+    updated_at: new Date().toISOString(),
+  };
+  const { data, error } = await client
+    .from('school_profile')
+    .upsert(payload)
+    .select('*')
+    .single();
+  if (error) throw new Error(error.message);
+  return mapSchoolProfile(data as SchoolProfileRow);
 }
 
 export async function fetchSchoolData(client: SupabaseClient): Promise<SchoolData> {

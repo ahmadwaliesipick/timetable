@@ -14,7 +14,7 @@ import { SchoolStore } from '../../core/school.store';
 })
 export class LoginComponent {
   private readonly auth = inject(AuthService);
-  private readonly store = inject(SchoolStore);
+  readonly store = inject(SchoolStore);
   private readonly router = inject(Router);
 
   readonly users = this.auth.demoUsers;

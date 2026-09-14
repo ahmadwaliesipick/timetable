@@ -54,6 +54,12 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/periods/periods.component').then((m) => m.PeriodsComponent),
       },
+      {
+        path: 'school',
+        canActivate: [adminGuard],
+        loadComponent: () =>
+          import('./features/school/school.component').then((m) => m.SchoolComponent),
+      },
     ],
   },
   { path: '**', redirectTo: 'daily' },

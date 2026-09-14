@@ -74,6 +74,39 @@ export interface SchoolData {
   arrangements: Arrangement[];
 }
 
+export interface SchoolProfile {
+  id: number;
+  name: string;
+  shortName: string;
+  tagline: string;
+  address: string;
+  phone: string;
+  email: string;
+  website: string;
+  mapsUrl: string;
+  affiliation: string;
+  directorate: string;
+  establishedYear: number | null;
+  about: string;
+}
+
+export const DEFAULT_SCHOOL_PROFILE: SchoolProfile = {
+  id: 1,
+  name: 'F.G Public School No.4 (Girls)',
+  shortName: 'FGPS No.4 Girls',
+  tagline: 'Lahore Cantt',
+  address: 'Old Officers Colony, Lahore Cantt, Punjab, Pakistan',
+  phone: '042-99220675',
+  email: '',
+  website: '',
+  mapsUrl: 'https://share.google/51rHgYlhYsaagxAgW',
+  affiliation: 'FBISE',
+  directorate: 'FGEI (Cantonments/Garrisons), Lahore Region',
+  establishedYear: null,
+  about:
+    'Federal Government Educational Institution for girls in Lahore Cantt. The school offers education from the early years through matriculation and is affiliated with FBISE, Islamabad.',
+};
+
 export const DAY_LABELS: Record<number, string> = {
   1: 'Monday',
   2: 'Tuesday',

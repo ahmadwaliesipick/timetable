@@ -5,7 +5,9 @@ import {
   Arrangement,
   ClassSection,
   Period,
+  DEFAULT_SCHOOL_PROFILE,
   SchoolData,
+  SchoolProfile,
   Subject,
   Teacher,
   TimetableSlot,
@@ -26,6 +28,7 @@ const STORAGE_KEY = 'timetable.schoolData.v1';
 export class SchoolStore {
   private readonly auth = inject(AuthService);
   private readonly state = signal<SchoolData>(emptyData());
+  readonly profile = signal<SchoolProfile>(DEFAULT_SCHOOL_PROFILE);
   readonly loading = signal(false);
   readonly lastError = signal<string | null>(null);
   readonly loaded = signal(false);
@@ -60,6 +63,7 @@ export class SchoolStore {
           this.state.set(data);
         }
       }
+      await this.loadProfile();
       this.loaded.set(true);
     } catch (e) {
       this.lastError.set(e instanceof Error ? e.message : 'Failed to load school data');
@@ -69,10 +73,35 @@ export class SchoolStore {
     }
   }
 
+  async loadProfile(): Promise<void> {
+    if (this.demoMode) {
+      this.profile.set(DEFAULT_SCHOOL_PROFILE);
+      return;
+    }
+    try {
+      const profile = await api.fetchSchoolProfile(this.client);
+      if (profile) this.profile.set(profile);
+    } catch {
+      this.profile.set(DEFAULT_SCHOOL_PROFILE);
+    }
+  }
+
+  async saveProfile(input: SchoolProfile): Promise<void> {
+    await this.run(async () => {
+      if (this.demoMode) {
+        this.profile.set({ ...input, id: 1 });
+        return;
+      }
+      const saved = await api.saveSchoolProfile(this.client, input);
+      this.profile.set(saved);
+    });
+  }
+
   clear(): void {
     this.state.set(emptyData());
     this.loaded.set(false);
     this.lastError.set(null);
+    void this.loadProfile();
   }
 
   private loadLocal(): SchoolData {
@@ -82,6 +111,7 @@ export class SchoolStore {
     } catch {
       /* ignore */
     }
+    this.profile.set(DEFAULT_SCHOOL_PROFILE);
     const seed = createSeedData();
     localStorage.setItem(STORAGE_KEY, JSON.stringify(seed));
     return seed;
@@ -100,6 +130,7 @@ export class SchoolStore {
 
   resetDemoData(): void {
     if (!this.demoMode) return;
+    this.profile.set(DEFAULT_SCHOOL_PROFILE);
     this.persistLocal(createSeedData());
   }
 
