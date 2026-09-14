@@ -1,17 +1,23 @@
 .day-tabs {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 0.4rem;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  padding-bottom: 0.15rem;
   width: 100%;
 }
 
-.day-tabs .btn {
-  flex: 0 0 auto;
-  white-space: nowrap;
-  padding: 0.5rem 0.75rem;
+.day-tab {
+  min-height: 2.75rem;
+  padding: 0.55rem 0.35rem;
   font-size: 0.88rem;
+  line-height: 1.15;
+}
+
+.day-full {
+  display: none;
+}
+
+.day-short {
+  display: inline;
 }
 
 .desk-grid {
@@ -24,32 +30,26 @@
   font-weight: 600;
 }
 
-.slot-list {
-  display: grid;
-  gap: 0.55rem;
-}
-
-.slot-card {
-  display: flex;
-  justify-content: space-between;
-  gap: 0.75rem;
-  align-items: flex-start;
-  padding: 0.75rem;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: white;
-}
-
-@media (max-width: 640px) {
-  .slot-card {
-    flex-direction: column;
+@media (min-width: 640px) {
+  .day-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    width: auto;
   }
-}
 
-.muted {
-  color: var(--muted);
-  font-size: 0.9rem;
-  margin-top: 0.2rem;
+  .day-tab {
+    min-height: 0;
+    padding: 0.5rem 0.85rem;
+    white-space: nowrap;
+  }
+
+  .day-full {
+    display: inline;
+  }
+
+  .day-short {
+    display: none;
+  }
 }
 
 @media (min-width: 900px) {

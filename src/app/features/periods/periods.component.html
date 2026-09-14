@@ -33,25 +33,26 @@
       </div>
     </form>
 
-    <section class="panel table-wrap">
-      <table class="data">
-        <thead>
-          <tr><th>Order</th><th>Name</th><th>Time</th><th></th></tr>
-        </thead>
-        <tbody>
+    <section class="panel">
+      <h2>Bell times</h2>
+      @if (!store.periods().length) {
+        <div class="empty">No periods yet.</div>
+      } @else {
+        <div class="entity-list">
           @for (p of store.periods(); track p.id) {
-            <tr>
-              <td>{{ p.sortOrder }}</td>
-              <td>{{ p.name }}</td>
-              <td>{{ p.startTime || '—' }} – {{ p.endTime || '—' }}</td>
-              <td class="row-actions">
+            <article class="entity-card">
+              <div>
+                <strong>{{ p.sortOrder }}. {{ p.name }}</strong>
+                <div class="muted">{{ p.startTime || '—' }} – {{ p.endTime || '—' }}</div>
+              </div>
+              <div class="row-actions">
                 <button class="btn ghost" type="button" (click)="startEdit(p)">Edit</button>
                 <button class="btn ghost" type="button" (click)="remove(p.id)">Delete</button>
-              </td>
-            </tr>
+              </div>
+            </article>
           }
-        </tbody>
-      </table>
+        </div>
+      }
     </section>
   </div>
 </section>

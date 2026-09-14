@@ -25,24 +25,26 @@
       </div>
     </form>
 
-    <section class="panel table-wrap">
-      <table class="data">
-        <thead>
-          <tr><th>Name</th><th>Code</th><th></th></tr>
-        </thead>
-        <tbody>
+    <section class="panel">
+      <h2>Catalogue</h2>
+      @if (!store.subjects().length) {
+        <div class="empty">No subjects yet.</div>
+      } @else {
+        <div class="entity-list">
           @for (s of store.subjects(); track s.id) {
-            <tr>
-              <td>{{ s.name }}</td>
-              <td>{{ s.code || '—' }}</td>
-              <td class="row-actions">
+            <article class="entity-card">
+              <div>
+                <strong>{{ s.name }}</strong>
+                <div class="muted">{{ s.code || 'No code' }}</div>
+              </div>
+              <div class="row-actions">
                 <button class="btn ghost" type="button" (click)="startEdit(s)">Edit</button>
                 <button class="btn ghost" type="button" (click)="remove(s.id)">Delete</button>
-              </td>
-            </tr>
+              </div>
+            </article>
           }
-        </tbody>
-      </table>
+        </div>
+      }
     </section>
   </div>
 </section>

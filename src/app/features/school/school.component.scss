@@ -4,7 +4,8 @@
 }
 
 .preview h2 {
-  font-size: 1.55rem;
+  font-size: clamp(1.25rem, 4vw, 1.55rem);
+  word-break: break-word;
 }
 
 .crest {
@@ -49,6 +50,7 @@
 
 .facts dd {
   margin: 0;
+  overflow-wrap: anywhere;
 }
 
 .notice {
@@ -58,6 +60,12 @@
 
 .span-2 {
   grid-column: 1 / -1;
+}
+
+@media (max-width: 640px) {
+  .row-actions .btn {
+    width: 100%;
+  }
 }
 
 @media (min-width: 900px) {

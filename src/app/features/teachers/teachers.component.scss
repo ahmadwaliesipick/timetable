@@ -8,6 +8,18 @@
   font-weight: 600;
 }
 
+@media (max-width: 640px) {
+  .checkbox-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.45rem 0.65rem;
+  }
+
+  .checkbox-grid label {
+    font-size: 0.92rem;
+  }
+}
+
 @media (min-width: 900px) {
   .desk-grid {
     grid-template-columns: 0.9fr 1.1fr;

@@ -4,18 +4,22 @@
       <h1>Weekly timetable</h1>
       <p>Feed the master schedule first — daily cover depends on these slots.</p>
     </div>
-    <div class="day-tabs">
-      @for (d of days; track d) {
-        <button
-          type="button"
-          class="btn"
-          [class.secondary]="dayOfWeek() !== d"
-          (click)="dayOfWeek.set(d); startCreate()"
-        >
-          {{ dayLabels[d] }}
-        </button>
-      }
-    </div>
+  </div>
+
+  <div class="day-tabs" role="tablist" aria-label="Weekday">
+    @for (d of days; track d) {
+      <button
+        type="button"
+        class="btn day-tab"
+        role="tab"
+        [attr.aria-selected]="dayOfWeek() === d"
+        [class.secondary]="dayOfWeek() !== d"
+        (click)="dayOfWeek.set(d); startCreate()"
+      >
+        <span class="day-full">{{ dayLabels[d] }}</span>
+        <span class="day-short">{{ dayShortLabels[d] }}</span>
+      </button>
+    }
   </div>
 
   <div class="desk-grid">
@@ -73,9 +77,9 @@
       @if (!daySlots().length) {
         <div class="empty">No slots for this day yet.</div>
       } @else {
-        <div class="slot-list">
+        <div class="entity-list">
           @for (s of daySlots(); track s.id) {
-            <article class="slot-card">
+            <article class="entity-card">
               <div>
                 <strong>{{ periodLabel(s.periodId) }} · {{ classLabel(s.classSectionId) }}</strong>
                 <div class="muted">

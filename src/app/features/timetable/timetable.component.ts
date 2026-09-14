@@ -1,6 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { DAY_LABELS, TimetableSlot } from '../../core/models';
+import { DAY_LABELS, DAY_SHORT_LABELS, TimetableSlot } from '../../core/models';
 import {
   className,
   periodName,
@@ -29,6 +29,7 @@ export class TimetableComponent {
 
   readonly days = [1, 2, 3, 4, 5];
   readonly dayLabels = DAY_LABELS;
+  readonly dayShortLabels = DAY_SHORT_LABELS;
 
   constructor() {
     this.startCreate();

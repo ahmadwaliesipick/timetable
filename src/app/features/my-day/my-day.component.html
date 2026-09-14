@@ -4,7 +4,7 @@
       <h1>My day</h1>
       <p>{{ dayLabel() }} · your lessons and confirmed cover duties.</p>
     </div>
-    <div class="field" style="margin: 0; min-width: 180px">
+    <div class="field date-field">
       <label>Date</label>
       <input type="date" [ngModel]="date()" (ngModelChange)="date.set($event)" />
     </div>

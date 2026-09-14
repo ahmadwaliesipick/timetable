@@ -25,24 +25,26 @@
       </div>
     </form>
 
-    <section class="panel table-wrap">
-      <table class="data">
-        <thead>
-          <tr><th>Name</th><th>Grade</th><th></th></tr>
-        </thead>
-        <tbody>
+    <section class="panel">
+      <h2>Sections</h2>
+      @if (!store.classSections().length) {
+        <div class="empty">No classes yet.</div>
+      } @else {
+        <div class="entity-list">
           @for (c of store.classSections(); track c.id) {
-            <tr>
-              <td>{{ c.name }}</td>
-              <td>{{ c.grade || '—' }}</td>
-              <td class="row-actions">
+            <article class="entity-card">
+              <div>
+                <strong>{{ c.name }}</strong>
+                <div class="muted">Grade {{ c.grade || '—' }}</div>
+              </div>
+              <div class="row-actions">
                 <button class="btn ghost" type="button" (click)="startEdit(c)">Edit</button>
                 <button class="btn ghost" type="button" (click)="remove(c.id)">Delete</button>
-              </td>
-            </tr>
+              </div>
+            </article>
           }
-        </tbody>
-      </table>
+        </div>
+      }
     </section>
   </div>
 </section>

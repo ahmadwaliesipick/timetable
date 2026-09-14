@@ -42,30 +42,27 @@
       </div>
     </form>
 
-    <section class="panel table-wrap">
-      <table class="data">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Subjects</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
+    <section class="panel">
+      <h2>Directory</h2>
+      @if (!store.teachers().length) {
+        <div class="empty">No teachers yet.</div>
+      } @else {
+        <div class="entity-list">
           @for (t of store.teachers(); track t.id) {
-            <tr>
-              <td>{{ t.name }}</td>
-              <td>{{ t.email || '—' }}</td>
-              <td>{{ subjectNames(t.subjectIds) || '—' }}</td>
-              <td class="row-actions">
+            <article class="entity-card">
+              <div>
+                <strong>{{ t.name }}</strong>
+                <div class="muted">{{ t.email || 'No email' }}</div>
+                <div class="muted">{{ subjectNames(t.subjectIds) || 'No subjects tagged' }}</div>
+              </div>
+              <div class="row-actions">
                 <button class="btn ghost" type="button" (click)="startEdit(t)">Edit</button>
                 <button class="btn ghost" type="button" (click)="remove(t.id)">Delete</button>
-              </td>
-            </tr>
+              </div>
+            </article>
           }
-        </tbody>
-      </table>
+        </div>
+      }
     </section>
   </div>
 </section>
