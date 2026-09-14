@@ -86,14 +86,14 @@ export function buildWhatsAppMessage(
   return lines.join('\n');
 }
 
-/** Opens a print window so the user can Save as PDF / share from the print sheet. */
-export function openDailyBoardPrint(
+/** Builds the printable HTML for the daily cover board. */
+export function buildDailyBoardHtml(
   profile: SchoolProfile,
   dateIso: string,
   absences: Absence[],
   rows: DailyBoardRow[],
   teachers: Teacher[]
-): void {
+): string {
   const absentNames = absences
     .map((a) => teacherName(teachers, a.teacherId))
     .filter((n) => n !== '—')
@@ -114,7 +114,7 @@ export function openDailyBoardPrint(
         .join('')
     : `<tr><td colspan="6">No arrangements for this date.</td></tr>`;
 
-  const html = `<!DOCTYPE html>
+  return `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8" />
@@ -156,17 +156,60 @@ export function openDailyBoardPrint(
     </thead>
     <tbody>${bodyRows}</tbody>
   </table>
-  <script>window.onload = () => setTimeout(() => window.print(), 250);</script>
 </body>
 </html>`;
+}
 
-  const win = window.open('', '_blank', 'noopener,noreferrer,width=900,height=700');
-  if (!win) {
-    throw new Error('Pop-up blocked. Allow pop-ups to export PDF.');
+/**
+ * Opens the system print dialog (Save as PDF) via a hidden iframe.
+ * Avoids window.open + noopener, which returns null and breaks export in modern browsers.
+ */
+export function openDailyBoardPrint(
+  profile: SchoolProfile,
+  dateIso: string,
+  absences: Absence[],
+  rows: DailyBoardRow[],
+  teachers: Teacher[]
+): void {
+  const html = buildDailyBoardHtml(profile, dateIso, absences, rows, teachers);
+  const iframe = document.createElement('iframe');
+  iframe.setAttribute('title', 'Daily cover print');
+  iframe.style.position = 'fixed';
+  iframe.style.right = '0';
+  iframe.style.bottom = '0';
+  iframe.style.width = '0';
+  iframe.style.height = '0';
+  iframe.style.border = '0';
+  iframe.style.opacity = '0';
+  iframe.style.pointerEvents = 'none';
+  document.body.appendChild(iframe);
+
+  const frameWindow = iframe.contentWindow;
+  const frameDoc = frameWindow?.document;
+  if (!frameWindow || !frameDoc) {
+    iframe.remove();
+    throw new Error('Could not open print view. Try again in another browser.');
   }
-  win.document.open();
-  win.document.write(html);
-  win.document.close();
+
+  frameDoc.open();
+  frameDoc.write(html);
+  frameDoc.close();
+
+  const cleanup = () => {
+    setTimeout(() => iframe.remove(), 1000);
+  };
+
+  const triggerPrint = () => {
+    try {
+      frameWindow.focus();
+      frameWindow.print();
+    } finally {
+      cleanup();
+    }
+  };
+
+  // Give the frame a moment to layout before printing.
+  setTimeout(triggerPrint, 300);
 }
 
 export function openWhatsAppShare(message: string): void {
