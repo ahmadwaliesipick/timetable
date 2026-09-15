@@ -3,7 +3,6 @@ import {
   ArrangementStatus,
   ClassSection,
   isoDayOfWeek,
-  Period,
   SchoolData,
   Subject,
   Teacher,
@@ -14,25 +13,18 @@ import {
 /**
  * Semi-auto substitute ranking for a date.
  * Fairness: same subject preferred, then lighter day load + fewer covers already assigned.
+ * Skips absences where the teacher or class has needsCover turned off.
  */
 export function suggestArrangements(data: SchoolData, dateIso: string): Arrangement[] {
   const day = isoDayOfWeek(dateIso);
   const absentIds = new Set(
     data.absences.filter((a) => a.absenceDate === dateIso).map((a) => a.teacherId)
   );
-  const noCoverNeeded = new Set(
-    data.teachers.filter((t) => t.needsCover === false).map((t) => t.id)
-  );
-  const classesNoCover = new Set(
-    data.classSections.filter((c) => c.needsCover === false).map((c) => c.id)
-  );
 
   const daySlots = data.slots.filter((s) => s.dayOfWeek === day);
+  // Only create cover for slots where BOTH teacher and class still need cover.
   const gaps = daySlots.filter(
-    (s) =>
-      absentIds.has(s.teacherId) &&
-      !noCoverNeeded.has(s.teacherId) &&
-      !classesNoCover.has(s.classSectionId)
+    (s) => absentIds.has(s.teacherId) && slotNeedsCover(data, s)
   );
 
   /** Confirmed cover periods for a substitute on this date */
@@ -45,7 +37,7 @@ export function suggestArrangements(data: SchoolData, dateIso: string): Arrangem
       continue;
     }
     const slot = data.slots.find((s) => s.id === arr.timetableSlotId);
-    if (!slot) continue;
+    if (!slot || !slotNeedsCover(data, slot)) continue;
     if (!confirmedElsewhere.has(arr.substituteTeacherId)) {
       confirmedElsewhere.set(arr.substituteTeacherId, new Set());
     }
@@ -89,7 +81,7 @@ export function suggestArrangements(data: SchoolData, dateIso: string): Arrangem
   /** Covers assigned during this suggestion pass (for fairness) */
   const coversThisRun = new Map<string, number>();
 
-  // Process heavier gaps first so subject specialists aren't all taken by early light gaps
+  // Process scarcer subjects first so specialists aren't all taken by early light gaps
   const orderedGaps = [...gaps].sort((a, b) => {
     const aSpec = data.teachers.filter((t) => t.subjectIds.includes(a.subjectId)).length;
     const bSpec = data.teachers.filter((t) => t.subjectIds.includes(b.subjectId)).length;
@@ -97,6 +89,8 @@ export function suggestArrangements(data: SchoolData, dateIso: string): Arrangem
   });
 
   for (const gap of orderedGaps) {
+    if (!slotNeedsCover(data, gap)) continue;
+
     const existing = existingBySlot.get(gap.id);
     if (existing?.status === 'confirmed') {
       result.push(existing);
@@ -143,6 +137,26 @@ export function suggestArrangements(data: SchoolData, dateIso: string): Arrangem
   });
 
   return result;
+}
+
+/** True when both the teacher and the class still want cover arrangements. */
+export function slotNeedsCover(data: SchoolData, slot: TimetableSlot): boolean {
+  const teacher = data.teachers.find((t) => t.id === slot.teacherId);
+  const classSection = data.classSections.find((c) => c.id === slot.classSectionId);
+  if (teacher?.needsCover === false) return false;
+  if (classSection?.needsCover === false) return false;
+  return true;
+}
+
+/** Absent timetable slots skipped because teacher/class has cover turned off. */
+export function countSkippedCoverGaps(data: SchoolData, dateIso: string): number {
+  const day = isoDayOfWeek(dateIso);
+  const absentIds = new Set(
+    data.absences.filter((a) => a.absenceDate === dateIso).map((a) => a.teacherId)
+  );
+  return data.slots.filter(
+    (s) => s.dayOfWeek === day && absentIds.has(s.teacherId) && !slotNeedsCover(data, s)
+  ).length;
 }
 
 function rankCandidates(
@@ -212,7 +226,7 @@ export function className(classes: ClassSection[], id: string): string {
   return classes.find((c) => c.id === id)?.name ?? 'Unknown';
 }
 
-export function periodName(periods: Period[], id: string): string {
+export function periodName(periods: import('./models').Period[], id: string): string {
   return periods.find((p) => p.id === id)?.name ?? 'Unknown';
 }
 

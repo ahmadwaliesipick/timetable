@@ -18,6 +18,7 @@ import {
 import { createSeedData } from './seed-data';
 import {
   suggestArrangements,
+  countSkippedCoverGaps,
   updateArrangementPick,
   upsertArrangements,
 } from './suggestion.logic';
@@ -429,6 +430,10 @@ export class SchoolStore {
   }
 
   // —— Arrangements ——
+  skippedCoverGaps(dateIso: string): number {
+    return countSkippedCoverGaps(this.state(), dateIso);
+  }
+
   async generateSuggestions(dateIso: string): Promise<Arrangement[]> {
     const suggested = suggestArrangements(this.state(), dateIso);
     await this.run(async () => {

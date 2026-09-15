@@ -63,11 +63,18 @@ export class DailyDeskComponent {
   }
 
   async generate(): Promise<void> {
+    const skipped = this.store.skippedCoverGaps(this.date());
     const list = await this.store.generateSuggestions(this.date());
+    const skipNote =
+      skipped > 0
+        ? ` Skipped ${skipped} period(s) where teacher/class has cover turned off.`
+        : '';
     this.message.set(
       list.length
-        ? `Suggested cover for ${list.length} period(s). Review and confirm.`
-        : 'No uncovered periods for this date (no absences overlapping the timetable).'
+        ? `Suggested cover for ${list.length} period(s). Review and confirm.${skipNote}`
+        : skipped > 0
+          ? `No cover arrangements needed — ${skipped} absent period(s) skipped (cover turned off).`
+          : 'No uncovered periods for this date (no absences overlapping the timetable).'
     );
   }
 
