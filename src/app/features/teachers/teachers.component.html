@@ -43,10 +43,10 @@
             [checked]="needsCover()"
             (change)="needsCover.set($any($event.target).checked)"
           />
-          Needs cover when absent
+          Needs cover arrangements
         </label>
         <p class="hint">
-          Turn off for teachers whose absences should not create substitute arrangements.
+          Turn off so this teacher is not given cover when absent, and is not suggested to cover others.
         </p>
       </div>
       <div class="field subjects-field">
@@ -87,7 +87,7 @@
                 <div class="muted">{{ t.email || 'No email' }}</div>
                 <div class="muted">{{ subjectNames(t.subjectIds) || 'No subjects tagged' }}</div>
                 @if (t.needsCover === false) {
-                  <span class="badge soft">No cover needed</span>
+                  <span class="badge soft">Out of cover pool</span>
                 }
               </div>
               <div class="row-actions">

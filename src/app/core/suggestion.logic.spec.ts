@@ -113,4 +113,23 @@ describe('suggestArrangements', () => {
     // Ahmed still has 8A on Monday which should still get cover
     expect(classIds.some((id) => id === 'c-8a')).toBeTrue();
   });
+
+  it('does not suggest teachers with needsCover false as substitutes', () => {
+    const data = createSeedData();
+    const monday = '2026-09-14';
+    data.teachers.find((t) => t.id === 't-sara')!.needsCover = false;
+    data.absences.push({
+      id: uid(),
+      teacherId: 't-ahmed',
+      absenceDate: monday,
+      reason: 'Sick',
+    });
+
+    const result = suggestArrangements(data, monday);
+    expect(result.length).toBeGreaterThan(0);
+    expect(result.every((a) => a.substituteTeacherId !== 't-sara')).toBeTrue();
+    expect(
+      result.every((a) => !(a.suggestedCandidateIds ?? []).includes('t-sara'))
+    ).toBeTrue();
+  });
 });

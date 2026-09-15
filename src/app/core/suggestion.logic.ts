@@ -173,6 +173,7 @@ function rankCandidates(
   const busy = busyByPeriod.get(gap.periodId) ?? new Set();
 
   const scored = teachers
+    .filter((t) => t.needsCover !== false)
     .filter((t) => t.id !== gap.teacherId)
     .filter((t) => !absentIds.has(t.id))
     .filter((t) => !busy.has(t.id))

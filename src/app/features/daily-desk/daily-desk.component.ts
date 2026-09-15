@@ -92,8 +92,9 @@ export class DailyDeskComponent {
   }
 
   candidateOptions(suggestedIds: string[] | undefined) {
-    const ids = suggestedIds?.length ? suggestedIds : this.store.teachers().map((t) => t.id);
-    const map = new Map(this.store.teachers().map((t) => [t.id, t]));
+    const eligible = this.store.teachers().filter((t) => t.needsCover !== false);
+    const ids = suggestedIds?.length ? suggestedIds : eligible.map((t) => t.id);
+    const map = new Map(eligible.map((t) => [t.id, t]));
     return ids.map((id) => map.get(id)).filter(Boolean);
   }
 
