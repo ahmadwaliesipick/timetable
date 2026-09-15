@@ -132,4 +132,27 @@ describe('suggestArrangements', () => {
       result.every((a) => !(a.suggestedCandidateIds ?? []).includes('t-sara'))
     ).toBeTrue();
   });
+
+  it('excludes every teacher with needsCover false from the substitute pool', () => {
+    const data = createSeedData();
+    const monday = '2026-09-14';
+    data.teachers.find((t) => t.id === 't-sara')!.needsCover = false;
+    data.teachers.find((t) => t.id === 't-omar')!.needsCover = false;
+    data.teachers.find((t) => t.id === 't-fatima')!.subjectIds = ['s-hist', 's-math'];
+    data.absences.push({
+      id: uid(),
+      teacherId: 't-ahmed',
+      absenceDate: monday,
+      reason: 'Sick',
+    });
+
+    const result = suggestArrangements(data, monday);
+    expect(result.length).toBeGreaterThan(0);
+    for (const a of result) {
+      expect(a.substituteTeacherId).not.toBe('t-sara');
+      expect(a.substituteTeacherId).not.toBe('t-omar');
+      expect(a.suggestedCandidateIds ?? []).not.toContain('t-sara');
+      expect(a.suggestedCandidateIds ?? []).not.toContain('t-omar');
+    }
+  });
 });
